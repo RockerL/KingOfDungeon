@@ -159,3 +159,7 @@ func GetPulicIP() string {
 	return localAddr[0:idx]
 }
 
+func GetIPFromAddr(addr string) string{
+	idx := strings.LastIndex(addr, ":")
+	return addr[0:idx]
+}
