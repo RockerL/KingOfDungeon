@@ -1,0 +1,10 @@
+{
+    "initBackDist":4,
+    "initHeight":4,
+    "minDist":3,
+    "maxDist":7.2,
+	"rotateSpeed":3,
+	"pitchSpeed":3,
+	"pitchMinDegree":45,
+	"pitchMaxDegree":70
+}

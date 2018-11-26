@@ -1,0 +1,69 @@
+﻿syntax = "proto3";
+
+package msg;
+
+//登录请求
+message req_login{
+	string userId = 1;	//用户唯一ID
+}
+
+//登录返回
+message rsp_login{
+	int32 retCode = 1;	//=0登录成功，其他是错误码
+}
+
+//获取角色列表
+message req_rolelist{
+}
+
+//角色列表中的表项定义
+message login_role_info{
+	string roleId = 1;	//角色唯一ID
+	string name = 2;	//角色名
+	uint32 level = 3;	//等级
+	uint32 sex = 4;		//性别0=男1=女
+	uint32 mapId = 5;	//所在地图ID
+}
+
+//返回角色列表
+message rsp_rolelist{
+	int32	retCode = 1;		//返回码=0没有错误
+	uint32	role_num = 2;		//返回的角色信息数量
+	repeated login_role_info roleInfos = 3;	//返回角色列表信息
+}
+
+//客户端请求创建角色
+message req_create_role{
+	string name = 1;	//角色名
+	uint32 sex = 2;		//角色性别
+}
+
+//服务端相应创建角色
+message rsp_create_role{
+	int32	retCode = 1;
+	login_role_info info = 2;	//新创建的role的信息
+}
+
+//删除角色
+message req_del_role{
+	string	roleId = 1;
+}
+
+message rsp_del_role{
+	int32	retCode = 1;
+	string	roleId = 2;
+}
+
+//选择角色进入游戏地图
+message req_select_role{
+	string	roleId = 1;	//选择角色ID
+}
+
+message rsp_select_role{
+	int32	retCode = 1;	//返回码
+	string	roleId = 2;	//选择的角色
+	uint32	mapId = 3;	//进入的地图编号
+	string	token = 4;	//进入服务器的令牌
+	string	server_ip = 5;	//要进入的服务器IP
+	string	server_port = 6;//要进入的服务器端口
+}

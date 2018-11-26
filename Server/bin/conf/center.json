@@ -1,0 +1,14 @@
+{
+	"LogLevel": "debug",
+	"LogPath": "",
+	"TCPAddr": "0.0.0.0:3566",
+	"MaxConnNum": 20000,
+
+	"DBAddr":"127.0.0.1",
+	"GameServer":{
+      "ServerCount":1,
+      "ServerInfo":[
+        {"in_ip": "127.0.0.1", "out_ip":"127.0.0.1","out_port":4999}
+      ]
+    }
+}

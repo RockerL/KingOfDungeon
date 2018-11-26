@@ -1,0 +1,25 @@
+{
+    "malePrefabs" :
+    [
+        "Entity/Player/Prefabs/Costume/Male/Archer/Male Black Archer 01 Black",
+        "Entity/Player/Prefabs/Costume/Male/Archer/Male Black Archer 02 Black"
+    ],
+
+    "femalePrefabs" :
+    [
+        "Entity/Player/Prefabs/Custum/Female/Archer/Female Black Archer 01 Black",
+        "Entity/Player/Prefabs/Custum/Female/Archer/Female Black Archer 02 Black"
+    ],
+
+    "weaponPrefabs":
+    [
+        "Entity/Player/Prefabs/Weapons/Axes (R Arm)/Axe 01",
+        "Entity/Player/Prefabs/Weapons/Longbows (L Arm)/Longbow 01 Black"
+    ],
+
+    "helmPrefabs":
+    [
+        "Entity/Player/Prefabs/Accessories/Helmets (Head)/Helmet 06 Purple",
+        "Entity/Player/Prefabs/Accessories/Helmets (Head)/Helmet 08 Brown"
+    ]
+}

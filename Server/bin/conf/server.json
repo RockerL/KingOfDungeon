@@ -1,0 +1,10 @@
+{
+	"LogLevel": "debug",
+	"LogPath": "",
+	"TCPAddr": "0.0.0.0:3563",
+	"MaxConnNum": 20000,
+
+	"DBAddr":"127.0.0.1",
+
+	"MapLoad":[1,2]
+}
