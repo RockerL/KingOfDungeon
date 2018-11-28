@@ -2,8 +2,8 @@ package internal
 
 import (
 	"github.com/name5566/leaf/gate"
+	"server/client"
 	"server/conf"
-	"server/game"
 	"server/msg"
 )
 
@@ -23,7 +23,7 @@ func (m *Module) OnInit() {
 		TCPAddr:         conf.Server.TCPAddr,
 		LenMsgLen:       conf.LenMsgLen,
 		LittleEndian:    conf.LittleEndian,
-		Processor:       msg.Processor,
-		AgentChanRPC:    game.ChanRPC,
+		Processor:       msg.CLProcessor,
+		AgentChanRPC:    client.ChanRPC,
 	}
 }

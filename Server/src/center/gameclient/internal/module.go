@@ -1,13 +1,13 @@
 package internal
 
 import (
-	"Common"
 	"center/base"
 	"center/conf"
 	"github.com/name5566/leaf/db/mongodb"
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/log"
 	"github.com/name5566/leaf/module"
+	"shared"
 )
 
 const DBName = "game"
@@ -17,27 +17,27 @@ const MaxRoleNum = 8
 
 //运行时用户
 type User struct {
-	data       Common.UserData
+	data       shared.UserData
 	selectRole string
 	agent      gate.Agent
 }
 
 var (
-	skeleton   = base.NewSkeleton()				//新建框架实例,skeleton 实现了 Module 接口的 Run 方法并提供了ChanRPC goroutine 定时器
-	ChanRPC    = skeleton.ChanRPCServer			//导出给外界使用
-	loginUsers = make(map[gate.Agent]*User)		//已经登录成功的在线用户
-	dbSession  *mongodb.DialContext = nil		//数据库连接
+	skeleton                        = base.NewSkeleton()         //新建框架实例,skeleton 实现了 Module 接口的 Run 方法并提供了ChanRPC goroutine 定时器
+	ChanRPC                         = skeleton.ChanRPCServer     //导出给外界使用
+	loginUsers                      = make(map[gate.Agent]*User) //已经登录成功的在线用户
+	dbSession  *mongodb.DialContext = nil                        //数据库连接
 )
 
 type Module struct {
-	*module.Skeleton		//组合了Skeleton模块，实现了Module
+	*module.Skeleton //组合了Skeleton模块，实现了Module
 }
 
 func (m *Module) OnInit() {
 	m.Skeleton = skeleton
 
 	//初始化数据连接
-	dbSession,err := mongodb.Dial(conf.Server.DBAddr, 10)
+	dbSession, err := mongodb.Dial(conf.Server.DBAddr, 10)
 	if dbSession == nil {
 		log.Release("can not connect mongodb ip %v err %v", conf.Server.DBAddr, err.Error())
 		return

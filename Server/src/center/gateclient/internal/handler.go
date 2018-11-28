@@ -29,7 +29,7 @@ func rpcGameServerRegistered(args []interface{}){
 		TCPAddr:         conf.Server.CLTCPAddr,
 		LenMsgLen:       conf.LenMsgLen,
 		LittleEndian:    conf.LittleEndian,
-		Processor:       msg.Processor,
+		Processor:       msg.CLProcessor,
 		AgentChanRPC:    gameclient.ChanRPC,
 	}
 

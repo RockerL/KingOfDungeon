@@ -1,10 +1,11 @@
 package gate
 
 import (
-	"server/game"
+	"proto"
+	"server/client"
 	"server/msg"
 )
 
 func init() {
-	msg.Processor.SetRouter(&msg.RoleInfo{}, game.ChanRPC)
+	msg.CLProcessor.SetRouter(&proto.ReqGetRole{}, client.ChanRPC)
 }

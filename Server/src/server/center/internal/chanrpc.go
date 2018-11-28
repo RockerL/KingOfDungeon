@@ -2,7 +2,6 @@ package internal
 
 import (
 	"github.com/name5566/leaf/gate"
-	"github.com/name5566/leaf/log"
 )
 
 func init() {
@@ -12,18 +11,10 @@ func init() {
 
 func rpcNewAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-
-	log.Debug("agent create %v", a.RemoteAddr())
-
+	_ = a
 }
 
 func rpcCloseAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-
-	_, ok := loginUsers[a]
-	if ok {
-		log.Debug("agent close %v", a.RemoteAddr())
-		delete(loginUsers, a)
-	}
-
+	_ = a
 }

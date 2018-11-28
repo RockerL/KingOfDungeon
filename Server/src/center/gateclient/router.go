@@ -3,15 +3,14 @@ package gateclient
 import (
 	"center/gameclient"
 	"center/msg"
+	"proto"
 )
 
 func init() {
-	//注册路由到login模块的消息
-	msg.Processor.SetRouter(&msg.ReqLogin{}, gameclient.ChanRPC)
-	msg.Processor.SetRouter(&msg.ReqCreateRole{}, gameclient.ChanRPC)
-	msg.Processor.SetRouter(&msg.ReqDelRole{}, gameclient.ChanRPC)
-	msg.Processor.SetRouter(&msg.ReqRolelist{}, gameclient.ChanRPC)
-	msg.Processor.SetRouter(&msg.ReqSelectRole{}, gameclient.ChanRPC)
-
-	//注册路由到game模块的消息
+	//注册路由到game client模块的消息
+	msg.CLProcessor.SetRouter(&proto.ReqLogin{}, gameclient.ChanRPC)
+	msg.CLProcessor.SetRouter(&proto.ReqCreateRole{}, gameclient.ChanRPC)
+	msg.CLProcessor.SetRouter(&proto.ReqDelRole{}, gameclient.ChanRPC)
+	msg.CLProcessor.SetRouter(&proto.ReqRolelist{}, gameclient.ChanRPC)
+	msg.CLProcessor.SetRouter(&proto.ReqSelectRole{}, gameclient.ChanRPC)
 }

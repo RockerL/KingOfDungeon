@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/name5566/leaf"
 	lconf "github.com/name5566/leaf/conf"
+	"server/center"
+	"server/client"
 	"server/conf"
-	"server/game"
 	"server/gate"
-	"server/login"
 )
 
 func main() {
@@ -20,8 +20,8 @@ func main() {
 	fmt.Println("game server start")
 
 	leaf.Run(
-		game.Module,
+		center.Module,
+		client.Module,
 		gate.Module,
-		login.Module,
 	)
 }

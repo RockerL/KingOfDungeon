@@ -1,4 +1,4 @@
-package Common
+package shared
 
 import "gopkg.in/mgo.v2/bson"
 

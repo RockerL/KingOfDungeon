@@ -3,13 +3,13 @@ package internal
 import (
 	"center/conf"
 	"center/gameserver"
-	"center/msg"
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/log"
+	"shared"
 )
 
 type Module struct {
-	*gate.Gate				//组合了Leaf的Gate类型，一起实现了Module
+	*gate.Gate //组合了Leaf的Gate类型，一起实现了Module
 }
 
 func (m *Module) OnInit() {
@@ -24,7 +24,7 @@ func (m *Module) OnInit() {
 		TCPAddr:         conf.Server.GSTCPAddr,
 		LenMsgLen:       conf.LenMsgLen,
 		LittleEndian:    conf.LittleEndian,
-		Processor:       msg.Processor,
+		Processor:       shared.GSCTProccessor,
 		AgentChanRPC:    gameserver.ChanRPC,
 	}
 
