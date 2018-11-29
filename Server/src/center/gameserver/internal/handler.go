@@ -2,10 +2,10 @@ package internal
 
 import (
 	"center/conf"
-	"center/gateclient"
 	"github.com/name5566/leaf/gate"
 	"proto"
 	"reflect"
+	"shared"
 )
 
 func handleMsg(m interface{}, h interface{}) {
@@ -28,6 +28,6 @@ func handleServerInited(args []interface{}) {
 	registeredServer++
 
 	if registeredServer == conf.Server.ServerNum {
-		gateclient.ChanRPC.Go("AllGameServerRegistered")
+		shared.GateClientChanRPC.Go("AllGameServerRegistered")
 	}
 }

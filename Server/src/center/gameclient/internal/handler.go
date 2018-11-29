@@ -26,7 +26,7 @@ func handleLogin(args []interface{}) {
 	r := args[0].(*proto.ReqLogin)
 	a := args[1].(gate.Agent)
 
-	_, isUserLogin := loginUsers[a]
+	_, isUserLogin := loginUsers[r.UserId]
 	if isUserLogin {
 		a.WriteMsg(&proto.RspLogin{
 			RetCode: 1, //用户已经登录
@@ -54,10 +54,14 @@ func handleLogin(args []interface{}) {
 
 	s.DB(DBName).C(UserTableName).Find(bson.M{"OpId": r.UserId}).One(&users)
 
-	loginUsers[a] = &User{
+	user := &User{
 		data:  users[0],
 		agent: a,
 	}
+
+	loginUsers[r.UserId] = user
+
+	loginAgentUsers[a] = user
 
 	a.WriteMsg(&proto.RspLogin{
 		RetCode: 0,
@@ -70,7 +74,7 @@ func handleLogin(args []interface{}) {
 func handleRoleList(args []interface{}) {
 	a := args[1].(gate.Agent)
 
-	user, ok := loginUsers[a]
+	user, ok := loginAgentUsers[a]
 	if !ok {
 		log.Debug("agent %v is not login", a.RemoteAddr())
 		a.WriteMsg(&proto.RspRolelist{
@@ -121,7 +125,7 @@ func handleCreateRole(args []interface{}) {
 	r := args[0].(*proto.ReqCreateRole)
 	a := args[1].(gate.Agent)
 
-	user, ok := loginUsers[a]
+	user, ok := loginAgentUsers[a]
 	if !ok {
 		a.WriteMsg(&proto.RspCreateRole{
 			RetCode: 1, //用户未登录
@@ -184,7 +188,7 @@ func handleDelRole(args []interface{}) {
 	r := args[0].(*proto.ReqDelRole)
 	a := args[1].(gate.Agent)
 
-	_, ok := loginUsers[a]
+	_, ok := loginAgentUsers[a]
 	if !ok {
 		a.WriteMsg(&proto.RspDelRole{
 			RetCode: 1, //用户未登录
@@ -221,7 +225,7 @@ func handleSelectRole(args []interface{}) {
 	r := args[0].(*proto.ReqSelectRole)
 	a := args[1].(gate.Agent)
 
-	user, ok := loginUsers[a]
+	user, ok := loginAgentUsers[a]
 	if !ok {
 		a.WriteMsg(&proto.RspSelectRole{
 			RetCode: 1, //用户未登录
@@ -252,5 +256,6 @@ func handleSelectRole(args []interface{}) {
 		return
 	}
 
-	//查找角色所在地图服务器
+	//通知角色所在地图服务器
+	shared.GameServerChanRPC.Go("NotifyRoleEnter", user)
 }

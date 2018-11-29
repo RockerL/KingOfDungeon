@@ -20,10 +20,10 @@ func rpcNewAgent(args []interface{}) {
 func rpcCloseAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
 
-	_, ok := loginUsers[a]
+	_, ok := loginAgentUsers[a]
 	if ok {
 		log.Debug("agent close %v", a.RemoteAddr())
-		delete(loginUsers, a)
+		delete(loginAgentUsers, a)
 	}
 
 }

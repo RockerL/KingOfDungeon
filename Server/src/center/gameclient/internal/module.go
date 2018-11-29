@@ -17,16 +17,16 @@ const MaxRoleNum = 8
 
 //运行时用户
 type User struct {
-	data       shared.UserData
-	selectRole string
-	agent      gate.Agent
+	data  shared.UserData
+	agent gate.Agent
 }
 
 var (
-	skeleton                        = base.NewSkeleton()         //新建框架实例,skeleton 实现了 Module 接口的 Run 方法并提供了ChanRPC goroutine 定时器
-	ChanRPC                         = skeleton.ChanRPCServer     //导出给外界使用
-	loginUsers                      = make(map[gate.Agent]*User) //已经登录成功的在线用户
-	dbSession  *mongodb.DialContext = nil                        //数据库连接
+	skeleton                             = base.NewSkeleton()         //新建框架实例,skeleton 实现了 Module 接口的 Run 方法并提供了ChanRPC goroutine 定时器
+	ChanRPC                              = skeleton.ChanRPCServer     //导出给外界使用
+	loginAgentUsers                      = make(map[gate.Agent]*User) //已经登录成功的在线用户
+	loginUsers                           = make(map[string]*User)     //已经登录成功的在线用户
+	dbSession       *mongodb.DialContext = nil                        //数据库连接
 )
 
 type Module struct {

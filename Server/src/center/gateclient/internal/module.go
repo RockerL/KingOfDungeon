@@ -4,19 +4,21 @@ import (
 	"center/base"
 	"github.com/name5566/leaf/log"
 	"github.com/name5566/leaf/module"
+	"shared"
 )
 
 type Module struct {
-	*module.Skeleton				//组合了Leaf的Skeleton类型，一起实现了Module
+	*module.Skeleton //组合了Leaf的Skeleton类型，一起实现了Module
 }
 
 var (
 	skeleton = base.NewSkeleton()
-	ChanRPC = skeleton.ChanRPCServer
+	ChanRPC  = skeleton.ChanRPCServer
 )
 
 func (m *Module) OnInit() {
 	m.Skeleton = skeleton
+	shared.GateClientChanRPC = ChanRPC
 	log.Debug("gate client module init")
 }
 

@@ -5,6 +5,7 @@ import (
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/log"
 	"github.com/name5566/leaf/module"
+	"shared"
 )
 
 type GameServer struct {
@@ -26,7 +27,7 @@ type Module struct {
 
 func (m *Module) OnInit() {
 	m.Skeleton = skeleton
-
+	shared.GameServerChanRPC = ChanRPC
 	log.Debug("game server module init")
 }
 
