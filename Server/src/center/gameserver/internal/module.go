@@ -8,14 +8,16 @@ import (
 )
 
 type GameServer struct {
-	agent gate.Agent
+	agent       gate.Agent
 	playerCount int
+	isReg       bool
 }
 
 var (
-	skeleton   = base.NewSkeleton()
-	ChanRPC    = skeleton.ChanRPCServer
-	runServers = make(map[gate.Agent]*GameServer)		//已经连上来的游戏服务器
+	skeleton         = base.NewSkeleton()
+	ChanRPC          = skeleton.ChanRPCServer
+	runServers       = make(map[gate.Agent]*GameServer) //已经连上来的游戏服务器
+	registeredServer = 0
 )
 
 type Module struct {

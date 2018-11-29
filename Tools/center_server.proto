@@ -1,15 +1,20 @@
 ﻿syntax = "proto3";
 
-package msg;
+package proto;
 
-//中心服务器通知地图服务器角色进入地图
+//游戏服务器通知中心服务器初始化完成
+message notify_server_inited{
+	repeated int32	loadedMaps = 1;
+}
+
+//中心服务器通知游戏服务器角色进入地图
 message notify_role_enter{
 	string	token = 1;
 	string	userId = 2;
 	string	roleId = 3;
 }
 
-//通知中心服务器角色已经可以进入地图了
+//游戏服务器通知中心服务器角色已经可以进入地图了
 message notify_role_entered{
 	string	userId = 1;
 }

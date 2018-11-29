@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-package msg;
+package proto;
 
 //登录请求
 message req_login{

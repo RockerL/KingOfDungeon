@@ -39,7 +39,7 @@ func (m *Module) OnInit() {
 	//初始化数据连接
 	dbSession, err := mongodb.Dial(conf.Server.DBAddr, 10)
 	if dbSession == nil {
-		log.Release("can not connect mongodb ip %v err %v", conf.Server.DBAddr, err.Error())
+		log.Error("can not connect mongodb ip %v err %v", conf.Server.DBAddr, err.Error())
 		return
 	} else {
 		log.Release("connect mongodb %v success", conf.Server.DBAddr)

@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-package msg;
+package proto;
 
 //客户端请求角色信息
 message req_get_role{	

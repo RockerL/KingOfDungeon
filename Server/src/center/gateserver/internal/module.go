@@ -24,7 +24,7 @@ func (m *Module) OnInit() {
 		TCPAddr:         conf.Server.GSTCPAddr,
 		LenMsgLen:       conf.LenMsgLen,
 		LittleEndian:    conf.LittleEndian,
-		Processor:       shared.GSCTProccessor,
+		Processor:       shared.GSCTProcessor,
 		AgentChanRPC:    gameserver.ChanRPC,
 	}
 

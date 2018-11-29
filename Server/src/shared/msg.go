@@ -5,13 +5,13 @@ import (
 	"proto"
 )
 
-var GSCTProccessor = protobuf.NewProcessor()
+var GSCTProcessor = protobuf.NewProcessor()
 
-func init(){
+func init() {
 	//game server to center server
-	GSCTProccessor.Register(&proto.NotifyServerInited{})
-	GSCTProccessor.Register(&proto.NotifyRoleEntered{})
+	GSCTProcessor.Register(&proto.NotifyServerInited{})
+	GSCTProcessor.Register(&proto.NotifyRoleEntered{})
 
 	//center server to game server
-	GSCTProccessor.Register(&proto.NotifyRoleEnter{})
+	GSCTProcessor.Register(&proto.NotifyRoleEnter{})
 }

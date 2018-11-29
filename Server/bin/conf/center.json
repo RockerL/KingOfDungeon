@@ -6,7 +6,7 @@
 	"CLMaxConnNum": 20000,
 
 	"GSTCPAddr": "0.0.0.0:35500",
-	"GSMaxConnNum": 10,
+	"GSMaxConnNum": 100,
 
 	"DBAddr":"127.0.0.1",
 

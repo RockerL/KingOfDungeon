@@ -16,8 +16,9 @@ var Server struct {
 	MaxConnNum  int
 	ConsolePort int
 	ProfilePath string
-
-	MapLoad []int
+	DBAddr      string
+	CTAddr      string
+	MapLoad     []int32
 }
 
 func init() {

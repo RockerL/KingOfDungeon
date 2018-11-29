@@ -100,7 +100,7 @@ reconnect:
 	client.conns[conn] = struct{}{}
 	client.Unlock()
 
-	tcpConn := newTCPConn(conn, client.PendingWriteNum, client.msgParser)
+	tcpConn := NewTCPConn(conn, client.PendingWriteNum, client.msgParser)
 	agent := client.NewAgent(tcpConn)
 	agent.Run()
 

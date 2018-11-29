@@ -5,6 +5,7 @@
 	"MaxConnNum": 20000,
 
 	"DBAddr":"127.0.0.1",
+	"CTAddr":"127.0.0.1:35500",
 
 	"MapLoad":[1]
 }

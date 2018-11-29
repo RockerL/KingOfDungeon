@@ -5,19 +5,20 @@ import (
 	"center/gameclient"
 	"center/msg"
 	"github.com/name5566/leaf/gate"
+	"github.com/name5566/leaf/log"
 )
 
 func init() {
-	skeleton.RegisterChanRPC("GameServerRegistered", rpcGameServerRegistered)
+	skeleton.RegisterChanRPC("AllGameServerRegistered", rpcAllGameServerRegistered)
 }
 
 var (
-	clientGate *gate.Gate
+	clientGate         *gate.Gate
 	clientGateCloseSig = make(chan bool, 1)
 )
 
 //当所有的游戏服务器注册成功则开放客户端加入
-func rpcGameServerRegistered(args []interface{}){
+func rpcAllGameServerRegistered(args []interface{}) {
 	clientGate = &gate.Gate{
 		MaxConnNum:      conf.Server.CLMaxConnNum,
 		PendingWriteNum: conf.PendingWriteNum,
@@ -36,4 +37,6 @@ func rpcGameServerRegistered(args []interface{}){
 	go func() {
 		clientGate.Run(clientGateCloseSig)
 	}()
+
+	log.Release("all game server registered, start client gate")
 }
