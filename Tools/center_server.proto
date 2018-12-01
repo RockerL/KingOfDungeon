@@ -4,18 +4,25 @@ package proto;
 
 //游戏服务器通知中心服务器初始化完成
 message notify_server_inited{
-	repeated int32	loadedMaps = 1;
+	repeated uint32	loadedMaps = 1;
 }
 
 //中心服务器通知游戏服务器角色进入地图
 message notify_role_enter{
-	string	token = 1;
-	string	userId = 2;
-	string	roleId = 3;
+	string	userId = 1;
+	string	roleId = 2;
+	uint32	mapId = 3;
+	string	token = 4;
 }
 
 //游戏服务器通知中心服务器角色已经可以进入地图了
-message notify_role_entered{
-	string	userId = 1;
+message notify_role_entered_ready{
+	int32	retCode = 1;
+	string	userId = 2;
+	string	roleId = 3;
+	uint32	mapId = 4;
+	string	token = 5;
+	string	server_ip = 6;	//要进入的服务器IP
+	string	server_port = 7;//要进入的服务器端口
 }
 

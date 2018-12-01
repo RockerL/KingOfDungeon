@@ -10,7 +10,7 @@ var GSCTProcessor = protobuf.NewProcessor()
 func init() {
 	//game server to center server
 	GSCTProcessor.Register(&proto.NotifyServerInited{})
-	GSCTProcessor.Register(&proto.NotifyRoleEntered{})
+	GSCTProcessor.Register(&proto.NotifyRoleEnteredReady{})
 
 	//center server to game server
 	GSCTProcessor.Register(&proto.NotifyRoleEnter{})

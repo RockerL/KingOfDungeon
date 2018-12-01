@@ -51,7 +51,7 @@ func (a *TCPAgent) Run() {
 
 func (a *TCPAgent) OnClose() {
 	if a.chanRPC != nil {
-		err := a.chanRPC.Call0("CloseAgent", a)
+		err := a.chanRPC.Call0("DisconnectFromServer", a)
 		if err != nil {
 			log.Error("chanrpc error: %v", err)
 		}

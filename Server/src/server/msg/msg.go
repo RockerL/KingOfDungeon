@@ -14,8 +14,8 @@ func init() {
 	CLProcessor.SetByteOrder(conf.LittleEndian)
 
 	//client to game server
-	CLProcessor.Register(&proto.ReqGetRole{})
+	CLProcessor.Register(&proto.ReqEnterGs{})
 
 	//game server to client
-	CLProcessor.Register(&proto.RspGetRole{})
+	CLProcessor.Register(&proto.RspEnterGs{})
 }

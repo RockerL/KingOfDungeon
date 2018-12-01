@@ -14,7 +14,7 @@ import (
 
 type IPInfo struct {
 	Code int `json:"code"`
-	Data IP  `json:"data`
+	Data IP  `json:"data"`
 }
 
 type IP struct {
@@ -85,13 +85,13 @@ func TabaoAPI(ip string) *IPInfo {
 }
 
 func inet_ntoa(ipnr int64) net.IP {
-	var bytes [4]byte
-	bytes[0] = byte(ipnr & 0xFF)
-	bytes[1] = byte((ipnr >> 8) & 0xFF)
-	bytes[2] = byte((ipnr >> 16) & 0xFF)
-	bytes[3] = byte((ipnr >> 24) & 0xFF)
+	var abytes [4]byte
+	abytes[0] = byte(ipnr & 0xFF)
+	abytes[1] = byte((ipnr >> 8) & 0xFF)
+	abytes[2] = byte((ipnr >> 16) & 0xFF)
+	abytes[3] = byte((ipnr >> 24) & 0xFF)
 
-	return net.IPv4(bytes[3], bytes[2], bytes[1], bytes[0])
+	return net.IPv4(abytes[3], abytes[2], abytes[1], abytes[0])
 }
 
 func inet_aton(ipnr net.IP) int64 {
@@ -159,7 +159,12 @@ func GetPulicIP() string {
 	return localAddr[0:idx]
 }
 
-func GetIPFromAddr(addr string) string{
+func GetIPFromAddr(addr string) string {
 	idx := strings.LastIndex(addr, ":")
 	return addr[0:idx]
+}
+
+func GetPortFromAddr(addr string) string {
+	idx := strings.LastIndex(addr, ":")
+	return addr[idx+1:]
 }

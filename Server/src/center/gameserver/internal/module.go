@@ -12,6 +12,7 @@ type GameServer struct {
 	agent       gate.Agent
 	playerCount int
 	isReg       bool
+	mapId       []uint32
 }
 
 var (

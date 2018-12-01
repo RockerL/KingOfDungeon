@@ -5,7 +5,6 @@ import (
 	"github.com/name5566/leaf"
 	lconf "github.com/name5566/leaf/conf"
 	"server/center"
-	"server/client"
 	"server/conf"
 	"server/gate"
 )
@@ -21,7 +20,6 @@ func main() {
 
 	leaf.Run(
 		center.Module,
-		client.Module,
 		gate.Module,
 	)
 }

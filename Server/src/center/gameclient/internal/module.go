@@ -10,15 +10,18 @@ import (
 	"shared"
 )
 
-const DBName = "game"
-const UserTableName = "user"
-const RoleTableName = "role"
-const MaxRoleNum = 8
+type UserState int
+
+const (
+	Login UserState = iota
+	EnterGS
+)
 
 //运行时用户
 type User struct {
 	data  shared.UserData
 	agent gate.Agent
+	state UserState
 }
 
 var (

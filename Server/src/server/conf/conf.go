@@ -21,4 +21,7 @@ var (
 	TimerDispatcherLen = 10000
 	AsynCallLen        = 10000
 	ChanRPCLen         = 10000
+
+	//map conf
+	MapRoleMax = 2000
 )

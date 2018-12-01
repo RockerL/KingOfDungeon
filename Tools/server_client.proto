@@ -2,11 +2,6 @@
 
 package proto;
 
-//客户端请求角色信息
-message req_get_role{	
-	
-}
-
 //角色位置
 message role_pos{
 	float x = 1;
@@ -14,29 +9,25 @@ message role_pos{
 	float z = 3;
 }
 
-//角色角度
-message role_angle{
-	uint32 angle = 1;	//0-360度
-}
-
 //角色信息
-message role_info{
+message role_base_info{
 	string name = 1;	//名字
 	uint32 level = 2;	//等级
-	uint32 map_id = 3;	//地图id
+	int32 map_id = 3;	//地图id
 	uint32 exp = 4;		//经验
 }
 
-//服务端响应角色信息
-message rsp_get_role{
-	uint64 id = 1;		//玩家角色唯一id
-	role_info info = 2;	//
+//客户端请求进入服务器
+message req_enter_gs{	
+	string	token = 1;	//令牌
+	string	roleId = 2;	//要选择的角色
 }
 
-//服务端推送角色信息改变
-message push_role{	
-	role_info info = 1;	//只发其中改变的信息
+//
+message rsp_enter_gs{
+	int32	retCode = 1;
 }
+
 
 
 

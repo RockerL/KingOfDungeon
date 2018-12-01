@@ -18,7 +18,7 @@ var Server struct {
 	ProfilePath string
 	DBAddr      string
 	CTAddr      string
-	MapLoad     []int32
+	MapLoad     []uint32
 }
 
 func init() {

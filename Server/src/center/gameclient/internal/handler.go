@@ -41,22 +41,23 @@ func handleLogin(args []interface{}) {
 	s := dbSession.Ref()
 	defer dbSession.UnRef(s)
 	var users []shared.UserData
-	s.DB(DBName).C(UserTableName).Find(bson.M{"OpId": r.UserId}).One(&users)
+	s.DB(shared.DBName).C(shared.UserTableName).Find(bson.M{"OpId": r.UserId}).One(&users)
 
 	if len(users) == 0 {
 		log.Debug("user %v is not found, create it", r.UserId)
 
-		s.DB(DBName).C(UserTableName).Insert(&shared.UserData{
+		s.DB(shared.DBName).C(shared.UserTableName).Insert(&shared.UserData{
 			Id:      r.UserId,
 			RoleNum: 0,
 		})
 	}
 
-	s.DB(DBName).C(UserTableName).Find(bson.M{"OpId": r.UserId}).One(&users)
+	s.DB(shared.DBName).C(shared.UserTableName).Find(bson.M{"OpId": r.UserId}).One(&users)
 
 	user := &User{
 		data:  users[0],
 		agent: a,
+		state: Login,
 	}
 
 	loginUsers[r.UserId] = user
@@ -93,11 +94,20 @@ func handleRoleList(args []interface{}) {
 		return
 	}
 
+	if user.state != Login {
+		log.Debug("agent %v state wrong %v", a.RemoteAddr(), user.state)
+		a.WriteMsg(&proto.RspRolelist{
+			RetCode: 3, //错误的状态
+			RoleNum: 0,
+		})
+		return
+	}
+
 	//去角色表里查找该用户的所有角色
 	s := dbSession.Ref()
 	defer dbSession.UnRef(s)
 	var roles []shared.RoleData
-	s.DB(DBName).C(RoleTableName).Find(bson.M{"UserId": user.data.Id}).All(&roles)
+	s.DB(shared.DBName).C(shared.RoleTableName).Find(bson.M{"UserId": user.data.Id}).All(&roles)
 
 	roleNum := len(roles)
 
@@ -134,7 +144,7 @@ func handleCreateRole(args []interface{}) {
 	}
 
 	//检查是否有空间创建角色
-	if user.data.RoleNum >= MaxRoleNum {
+	if user.data.RoleNum >= shared.MaxRoleNum {
 		a.WriteMsg(&proto.RspCreateRole{
 			RetCode: 2, //没有空间创建角色
 		})
@@ -162,7 +172,7 @@ func handleCreateRole(args []interface{}) {
 	//写入数据库
 	s := dbSession.Ref()
 	defer dbSession.UnRef(s)
-	err := s.DB(DBName).C(RoleTableName).Insert(&role)
+	err := s.DB(shared.DBName).C(shared.RoleTableName).Insert(&role)
 	if err != nil {
 		log.Error("can not create role %v", err.Error())
 		a.WriteMsg(&proto.RspCreateRole{
@@ -202,7 +212,7 @@ func handleDelRole(args []interface{}) {
 
 	_id := bson.ObjectIdHex(r.RoleId)
 	var role = new(shared.RoleData)
-	err := s.DB(DBName).C(RoleTableName).Find(bson.M{"_id": _id}).One(&role)
+	err := s.DB(shared.DBName).C(shared.RoleTableName).Find(bson.M{"_id": _id}).One(&role)
 
 	if err != nil {
 		a.WriteMsg(&proto.RspDelRole{
@@ -212,7 +222,7 @@ func handleDelRole(args []interface{}) {
 		return
 	}
 
-	s.DB(DBName).C(RoleTableName).RemoveAll(bson.M{"_id": _id})
+	s.DB(shared.DBName).C(shared.RoleTableName).RemoveAll(bson.M{"_id": _id})
 
 	a.WriteMsg(&proto.RspDelRole{
 		RetCode: 0,
@@ -239,7 +249,7 @@ func handleSelectRole(args []interface{}) {
 
 	_id := bson.ObjectIdHex(r.RoleId)
 	var role = new(shared.RoleData)
-	err := s.DB(DBName).C(RoleTableName).Find(bson.M{"_id": _id}).One(&role)
+	err := s.DB(shared.DBName).C(shared.RoleTableName).Find(bson.M{"_id": _id}).One(&role)
 	if err != nil {
 		a.WriteMsg(&proto.RspSelectRole{
 			RetCode: 2, //没有找到角色数据
@@ -248,7 +258,7 @@ func handleSelectRole(args []interface{}) {
 		return
 	}
 
-	if user.data.Id != role.Id.String() {
+	if user.data.Id != role.UserId {
 		a.WriteMsg(&proto.RspSelectRole{
 			RetCode: 3, //角色数据和用户不对应
 			RoleId:  r.RoleId,
@@ -256,6 +266,8 @@ func handleSelectRole(args []interface{}) {
 		return
 	}
 
+	user.state = EnterGS
+
 	//通知角色所在地图服务器
-	shared.GameServerChanRPC.Go("NotifyRoleEnter", user)
+	shared.GameServerChanRPC.Go("NotifyRoleEnter", &user.data, role)
 }

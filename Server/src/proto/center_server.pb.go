@@ -22,7 +22,7 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 //游戏服务器通知中心服务器初始化完成
 type NotifyServerInited struct {
-	LoadedMaps           []int32  `protobuf:"varint,1,rep,packed,name=loadedMaps,proto3" json:"loadedMaps,omitempty"`
+	LoadedMaps           []uint32 `protobuf:"varint,1,rep,packed,name=loadedMaps,proto3" json:"loadedMaps,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -53,7 +53,7 @@ func (m *NotifyServerInited) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_NotifyServerInited proto.InternalMessageInfo
 
-func (m *NotifyServerInited) GetLoadedMaps() []int32 {
+func (m *NotifyServerInited) GetLoadedMaps() []uint32 {
 	if m != nil {
 		return m.LoadedMaps
 	}
@@ -62,9 +62,10 @@ func (m *NotifyServerInited) GetLoadedMaps() []int32 {
 
 //中心服务器通知游戏服务器角色进入地图
 type NotifyRoleEnter struct {
-	Token                string   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	UserId               string   `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
-	RoleId               string   `protobuf:"bytes,3,opt,name=roleId,proto3" json:"roleId,omitempty"`
+	UserId               string   `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	RoleId               string   `protobuf:"bytes,2,opt,name=roleId,proto3" json:"roleId,omitempty"`
+	MapId                uint32   `protobuf:"varint,3,opt,name=mapId,proto3" json:"mapId,omitempty"`
+	Token                string   `protobuf:"bytes,4,opt,name=token,proto3" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -95,13 +96,6 @@ func (m *NotifyRoleEnter) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_NotifyRoleEnter proto.InternalMessageInfo
 
-func (m *NotifyRoleEnter) GetToken() string {
-	if m != nil {
-		return m.Token
-	}
-	return ""
-}
-
 func (m *NotifyRoleEnter) GetUserId() string {
 	if m != nil {
 		return m.UserId
@@ -116,42 +110,104 @@ func (m *NotifyRoleEnter) GetRoleId() string {
 	return ""
 }
 
+func (m *NotifyRoleEnter) GetMapId() uint32 {
+	if m != nil {
+		return m.MapId
+	}
+	return 0
+}
+
+func (m *NotifyRoleEnter) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
 //游戏服务器通知中心服务器角色已经可以进入地图了
-type NotifyRoleEntered struct {
-	UserId               string   `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+type NotifyRoleEnteredReady struct {
+	RetCode              int32    `protobuf:"varint,1,opt,name=retCode,proto3" json:"retCode,omitempty"`
+	UserId               string   `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
+	RoleId               string   `protobuf:"bytes,3,opt,name=roleId,proto3" json:"roleId,omitempty"`
+	MapId                uint32   `protobuf:"varint,4,opt,name=mapId,proto3" json:"mapId,omitempty"`
+	Token                string   `protobuf:"bytes,5,opt,name=token,proto3" json:"token,omitempty"`
+	ServerIp             string   `protobuf:"bytes,6,opt,name=server_ip,json=serverIp,proto3" json:"server_ip,omitempty"`
+	ServerPort           string   `protobuf:"bytes,7,opt,name=server_port,json=serverPort,proto3" json:"server_port,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *NotifyRoleEntered) Reset()         { *m = NotifyRoleEntered{} }
-func (m *NotifyRoleEntered) String() string { return proto.CompactTextString(m) }
-func (*NotifyRoleEntered) ProtoMessage()    {}
-func (*NotifyRoleEntered) Descriptor() ([]byte, []int) {
+func (m *NotifyRoleEnteredReady) Reset()         { *m = NotifyRoleEnteredReady{} }
+func (m *NotifyRoleEnteredReady) String() string { return proto.CompactTextString(m) }
+func (*NotifyRoleEnteredReady) ProtoMessage()    {}
+func (*NotifyRoleEnteredReady) Descriptor() ([]byte, []int) {
 	return fileDescriptor_91fb75f26ebeb9d0, []int{2}
 }
 
-func (m *NotifyRoleEntered) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NotifyRoleEntered.Unmarshal(m, b)
+func (m *NotifyRoleEnteredReady) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_NotifyRoleEnteredReady.Unmarshal(m, b)
 }
-func (m *NotifyRoleEntered) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NotifyRoleEntered.Marshal(b, m, deterministic)
+func (m *NotifyRoleEnteredReady) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_NotifyRoleEnteredReady.Marshal(b, m, deterministic)
 }
-func (m *NotifyRoleEntered) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NotifyRoleEntered.Merge(m, src)
+func (m *NotifyRoleEnteredReady) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NotifyRoleEnteredReady.Merge(m, src)
 }
-func (m *NotifyRoleEntered) XXX_Size() int {
-	return xxx_messageInfo_NotifyRoleEntered.Size(m)
+func (m *NotifyRoleEnteredReady) XXX_Size() int {
+	return xxx_messageInfo_NotifyRoleEnteredReady.Size(m)
 }
-func (m *NotifyRoleEntered) XXX_DiscardUnknown() {
-	xxx_messageInfo_NotifyRoleEntered.DiscardUnknown(m)
+func (m *NotifyRoleEnteredReady) XXX_DiscardUnknown() {
+	xxx_messageInfo_NotifyRoleEnteredReady.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_NotifyRoleEntered proto.InternalMessageInfo
+var xxx_messageInfo_NotifyRoleEnteredReady proto.InternalMessageInfo
 
-func (m *NotifyRoleEntered) GetUserId() string {
+func (m *NotifyRoleEnteredReady) GetRetCode() int32 {
+	if m != nil {
+		return m.RetCode
+	}
+	return 0
+}
+
+func (m *NotifyRoleEnteredReady) GetUserId() string {
 	if m != nil {
 		return m.UserId
+	}
+	return ""
+}
+
+func (m *NotifyRoleEnteredReady) GetRoleId() string {
+	if m != nil {
+		return m.RoleId
+	}
+	return ""
+}
+
+func (m *NotifyRoleEnteredReady) GetMapId() uint32 {
+	if m != nil {
+		return m.MapId
+	}
+	return 0
+}
+
+func (m *NotifyRoleEnteredReady) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
+func (m *NotifyRoleEnteredReady) GetServerIp() string {
+	if m != nil {
+		return m.ServerIp
+	}
+	return ""
+}
+
+func (m *NotifyRoleEnteredReady) GetServerPort() string {
+	if m != nil {
+		return m.ServerPort
 	}
 	return ""
 }
@@ -159,22 +215,27 @@ func (m *NotifyRoleEntered) GetUserId() string {
 func init() {
 	proto.RegisterType((*NotifyServerInited)(nil), "proto.notify_server_inited")
 	proto.RegisterType((*NotifyRoleEnter)(nil), "proto.notify_role_enter")
-	proto.RegisterType((*NotifyRoleEntered)(nil), "proto.notify_role_entered")
+	proto.RegisterType((*NotifyRoleEnteredReady)(nil), "proto.notify_role_entered_ready")
 }
 
 func init() { proto.RegisterFile("center_server.proto", fileDescriptor_91fb75f26ebeb9d0) }
 
 var fileDescriptor_91fb75f26ebeb9d0 = []byte{
-	// 168 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4e, 0x4e, 0xcd, 0x2b,
-	0x49, 0x2d, 0x8a, 0x2f, 0x4e, 0x2d, 0x2a, 0x4b, 0x2d, 0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17,
-	0x62, 0x05, 0x53, 0x4a, 0x66, 0x5c, 0x22, 0x79, 0xf9, 0x25, 0x99, 0x69, 0x95, 0x50, 0xd9, 0xf8,
-	0xcc, 0xbc, 0xcc, 0x92, 0xd4, 0x14, 0x21, 0x39, 0x2e, 0xae, 0x9c, 0xfc, 0xc4, 0x94, 0xd4, 0x14,
-	0xdf, 0xc4, 0x82, 0x62, 0x09, 0x46, 0x05, 0x66, 0x0d, 0xd6, 0x20, 0x24, 0x11, 0xa5, 0x48, 0x2e,
-	0x41, 0xa8, 0xbe, 0xa2, 0xfc, 0x9c, 0xd4, 0x78, 0xb0, 0x05, 0x42, 0x22, 0x5c, 0xac, 0x25, 0xf9,
-	0xd9, 0xa9, 0x79, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0x9c, 0x41, 0x10, 0x8e, 0x90, 0x18, 0x17, 0x5b,
-	0x69, 0x71, 0x6a, 0x91, 0x67, 0x8a, 0x04, 0x13, 0x58, 0x18, 0xca, 0x03, 0x89, 0x83, 0xf4, 0x7a,
-	0xa6, 0x48, 0x30, 0x43, 0xc4, 0x21, 0x3c, 0x25, 0x5d, 0x2e, 0x61, 0x0c, 0xa3, 0x53, 0x53, 0x90,
-	0x8c, 0x61, 0x44, 0x36, 0x26, 0x89, 0x0d, 0xec, 0x11, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0x53, 0xc0, 0x8c, 0x6b, 0xe6, 0x00, 0x00, 0x00,
+	// 244 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0xc1, 0x4a, 0xc4, 0x30,
+	0x10, 0x86, 0xc9, 0x76, 0xdb, 0x75, 0x47, 0xf6, 0x60, 0x5c, 0x24, 0x22, 0x68, 0xe9, 0xa9, 0x27,
+	0x2f, 0x82, 0x2f, 0xe0, 0xa9, 0x07, 0x41, 0xfa, 0x02, 0xa5, 0x3a, 0x23, 0x14, 0xd7, 0x4e, 0x98,
+	0x8e, 0xc2, 0x3e, 0xa5, 0xaf, 0x24, 0x4d, 0xba, 0x50, 0xb0, 0x9e, 0xc2, 0xff, 0xfd, 0x13, 0xe6,
+	0x23, 0x81, 0xcb, 0x37, 0xea, 0x95, 0xa4, 0x19, 0x48, 0xbe, 0x49, 0xee, 0xbd, 0xb0, 0xb2, 0x4d,
+	0xc3, 0x51, 0x3c, 0xc2, 0xbe, 0x67, 0xed, 0xde, 0x8f, 0x53, 0xdb, 0x74, 0x7d, 0xa7, 0x84, 0xf6,
+	0x16, 0xe0, 0xc0, 0x2d, 0x12, 0x3e, 0xb7, 0x7e, 0x70, 0x26, 0x4f, 0xca, 0x5d, 0x3d, 0x23, 0x05,
+	0xc3, 0xc5, 0x74, 0x4f, 0xf8, 0x40, 0x4d, 0x58, 0x60, 0xaf, 0x20, 0xfb, 0x1a, 0x48, 0x2a, 0x74,
+	0x26, 0x37, 0xe5, 0xb6, 0x9e, 0xd2, 0xc8, 0xc7, 0xa9, 0x0a, 0xdd, 0x2a, 0xf2, 0x98, 0xec, 0x1e,
+	0xd2, 0xcf, 0xd6, 0x57, 0xe8, 0x92, 0xdc, 0x94, 0xbb, 0x3a, 0x86, 0x91, 0x2a, 0x7f, 0x50, 0xef,
+	0xd6, 0x61, 0x38, 0x86, 0xe2, 0xc7, 0xc0, 0xf5, 0x9f, 0x8d, 0x84, 0x8d, 0x50, 0x8b, 0x47, 0xeb,
+	0x60, 0x23, 0xa4, 0x4f, 0x8c, 0x14, 0x56, 0xa7, 0xf5, 0x29, 0xce, 0x9c, 0x56, 0xff, 0x38, 0x25,
+	0xcb, 0x4e, 0xeb, 0x45, 0xa7, 0x74, 0xe6, 0x64, 0x6f, 0x60, 0x7b, 0x7a, 0x35, 0xef, 0xb2, 0xd0,
+	0x9c, 0x45, 0x50, 0x79, 0x7b, 0x07, 0xe7, 0x53, 0xe9, 0x59, 0xd4, 0x6d, 0x42, 0x0d, 0x11, 0xbd,
+	0xb0, 0xe8, 0x6b, 0x16, 0x7e, 0xe0, 0xe1, 0x37, 0x00, 0x00, 0xff, 0xff, 0x65, 0x9f, 0x66, 0xda,
+	0x9f, 0x01, 0x00, 0x00,
 }

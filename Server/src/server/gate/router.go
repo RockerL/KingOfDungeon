@@ -2,10 +2,10 @@ package gate
 
 import (
 	"proto"
-	"server/client"
+	"server/center"
 	"server/msg"
 )
 
 func init() {
-	msg.CLProcessor.SetRouter(&proto.ReqGetRole{}, client.ChanRPC)
+	msg.CLProcessor.SetRouter(&proto.ReqEnterGs{}, center.ChanRPC)
 }

@@ -2,30 +2,24 @@ package internal
 
 import (
 	"github.com/name5566/leaf/db/mongodb"
-	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/log"
 	"github.com/name5566/leaf/module"
 	"github.com/name5566/leaf/network"
 	"net"
+	"proto"
 	"server/base"
 	"server/conf"
 	"shared"
 	"sync"
 )
 
-//运行时角色
-type Role struct {
-	data  shared.RoleData
-	agent gate.Agent
-}
-
 var (
 	skeleton                            = base.NewSkeleton()
 	ChanRPC                             = skeleton.ChanRPCServer
-	roleInfos                           = make(map[string]*Role)
-	maps                                = make(map[int32]*Map)
+	waitEnterRoles                      = make(map[string]int64)
+	Maps                                = make(map[uint32]*Map)
 	loadedMapCount                      = 0
-	dbSession      *mongodb.DialContext = nil //数据库连接
+	DBSession      *mongodb.DialContext = nil //数据库连接
 	ctAgent        *TCPAgent
 )
 
@@ -39,13 +33,16 @@ func (m *Module) OnInit() {
 
 	sessionNum := len(conf.Server.MapLoad) * 2
 	//初始化数据连接
-	dbSession, err := mongodb.Dial(conf.Server.DBAddr, sessionNum)
-	if dbSession == nil {
+	DBSession, err := mongodb.Dial(conf.Server.DBAddr, sessionNum)
+	if DBSession == nil {
 		log.Error("can not connect mongodb ip %v err %v", conf.Server.DBAddr, err.Error())
 		return
 	} else {
 		log.Release("connect mongodb %v success", conf.Server.DBAddr)
 	}
+
+	//设置center server to game server 消息路由
+	shared.GSCTProcessor.SetRouter(&proto.NotifyRoleEnter{}, ChanRPC)
 
 	//连接center server，初始化agent
 	conn, err := net.Dial("tcp", conf.Server.CTAddr)
@@ -74,7 +71,7 @@ func (m *Module) OnInit() {
 		newMap := NewMap(mapId)
 
 		m.wg.Add(1)
-		maps[mapId] = newMap
+		Maps[mapId] = newMap
 
 		go func() {
 			log.Debug("map %v goroutine start", mapId)
@@ -83,14 +80,14 @@ func (m *Module) OnInit() {
 			m.wg.Done()
 		}()
 
-		newMap.Skeleton.ChanRPCServer.Go("LoadMap", newMap)
+		newMap.ChanRPCServer.Go("LoadMap", newMap)
 	}
 
 }
 
 func (m *Module) OnDestroy() {
 	log.Debug("center module destroy")
-	for _, v := range maps {
+	for _, v := range Maps {
 		v.closeSig <- true
 	}
 	m.wg.Wait()

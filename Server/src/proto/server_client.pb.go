@@ -20,38 +20,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-//客户端请求角色信息
-type ReqGetRole struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ReqGetRole) Reset()         { *m = ReqGetRole{} }
-func (m *ReqGetRole) String() string { return proto.CompactTextString(m) }
-func (*ReqGetRole) ProtoMessage()    {}
-func (*ReqGetRole) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{0}
-}
-
-func (m *ReqGetRole) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ReqGetRole.Unmarshal(m, b)
-}
-func (m *ReqGetRole) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ReqGetRole.Marshal(b, m, deterministic)
-}
-func (m *ReqGetRole) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReqGetRole.Merge(m, src)
-}
-func (m *ReqGetRole) XXX_Size() int {
-	return xxx_messageInfo_ReqGetRole.Size(m)
-}
-func (m *ReqGetRole) XXX_DiscardUnknown() {
-	xxx_messageInfo_ReqGetRole.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ReqGetRole proto.InternalMessageInfo
-
 //角色位置
 type RolePos struct {
 	X                    float32  `protobuf:"fixed32,1,opt,name=x,proto3" json:"x,omitempty"`
@@ -66,7 +34,7 @@ func (m *RolePos) Reset()         { *m = RolePos{} }
 func (m *RolePos) String() string { return proto.CompactTextString(m) }
 func (*RolePos) ProtoMessage()    {}
 func (*RolePos) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{1}
+	return fileDescriptor_55ccd995fd75bbbc, []int{0}
 }
 
 func (m *RolePos) XXX_Unmarshal(b []byte) error {
@@ -108,225 +76,181 @@ func (m *RolePos) GetZ() float32 {
 	return 0
 }
 
-//角色角度
-type RoleAngle struct {
-	Angle                uint32   `protobuf:"varint,1,opt,name=angle,proto3" json:"angle,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *RoleAngle) Reset()         { *m = RoleAngle{} }
-func (m *RoleAngle) String() string { return proto.CompactTextString(m) }
-func (*RoleAngle) ProtoMessage()    {}
-func (*RoleAngle) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{2}
-}
-
-func (m *RoleAngle) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RoleAngle.Unmarshal(m, b)
-}
-func (m *RoleAngle) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RoleAngle.Marshal(b, m, deterministic)
-}
-func (m *RoleAngle) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RoleAngle.Merge(m, src)
-}
-func (m *RoleAngle) XXX_Size() int {
-	return xxx_messageInfo_RoleAngle.Size(m)
-}
-func (m *RoleAngle) XXX_DiscardUnknown() {
-	xxx_messageInfo_RoleAngle.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RoleAngle proto.InternalMessageInfo
-
-func (m *RoleAngle) GetAngle() uint32 {
-	if m != nil {
-		return m.Angle
-	}
-	return 0
-}
-
 //角色信息
-type RoleInfo struct {
+type RoleBaseInfo struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Level                uint32   `protobuf:"varint,2,opt,name=level,proto3" json:"level,omitempty"`
-	MapId                uint32   `protobuf:"varint,3,opt,name=map_id,json=mapId,proto3" json:"map_id,omitempty"`
+	MapId                int32    `protobuf:"varint,3,opt,name=map_id,json=mapId,proto3" json:"map_id,omitempty"`
 	Exp                  uint32   `protobuf:"varint,4,opt,name=exp,proto3" json:"exp,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *RoleInfo) Reset()         { *m = RoleInfo{} }
-func (m *RoleInfo) String() string { return proto.CompactTextString(m) }
-func (*RoleInfo) ProtoMessage()    {}
-func (*RoleInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{3}
+func (m *RoleBaseInfo) Reset()         { *m = RoleBaseInfo{} }
+func (m *RoleBaseInfo) String() string { return proto.CompactTextString(m) }
+func (*RoleBaseInfo) ProtoMessage()    {}
+func (*RoleBaseInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_55ccd995fd75bbbc, []int{1}
 }
 
-func (m *RoleInfo) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RoleInfo.Unmarshal(m, b)
+func (m *RoleBaseInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RoleBaseInfo.Unmarshal(m, b)
 }
-func (m *RoleInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RoleInfo.Marshal(b, m, deterministic)
+func (m *RoleBaseInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RoleBaseInfo.Marshal(b, m, deterministic)
 }
-func (m *RoleInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RoleInfo.Merge(m, src)
+func (m *RoleBaseInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RoleBaseInfo.Merge(m, src)
 }
-func (m *RoleInfo) XXX_Size() int {
-	return xxx_messageInfo_RoleInfo.Size(m)
+func (m *RoleBaseInfo) XXX_Size() int {
+	return xxx_messageInfo_RoleBaseInfo.Size(m)
 }
-func (m *RoleInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_RoleInfo.DiscardUnknown(m)
+func (m *RoleBaseInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_RoleBaseInfo.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_RoleInfo proto.InternalMessageInfo
+var xxx_messageInfo_RoleBaseInfo proto.InternalMessageInfo
 
-func (m *RoleInfo) GetName() string {
+func (m *RoleBaseInfo) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
 }
 
-func (m *RoleInfo) GetLevel() uint32 {
+func (m *RoleBaseInfo) GetLevel() uint32 {
 	if m != nil {
 		return m.Level
 	}
 	return 0
 }
 
-func (m *RoleInfo) GetMapId() uint32 {
+func (m *RoleBaseInfo) GetMapId() int32 {
 	if m != nil {
 		return m.MapId
 	}
 	return 0
 }
 
-func (m *RoleInfo) GetExp() uint32 {
+func (m *RoleBaseInfo) GetExp() uint32 {
 	if m != nil {
 		return m.Exp
 	}
 	return 0
 }
 
-//服务端响应角色信息
-type RspGetRole struct {
-	Id                   uint64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Info                 *RoleInfo `protobuf:"bytes,2,opt,name=info,proto3" json:"info,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
+//客户端请求进入服务器
+type ReqEnterGs struct {
+	Token                string   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	RoleId               string   `protobuf:"bytes,2,opt,name=roleId,proto3" json:"roleId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *RspGetRole) Reset()         { *m = RspGetRole{} }
-func (m *RspGetRole) String() string { return proto.CompactTextString(m) }
-func (*RspGetRole) ProtoMessage()    {}
-func (*RspGetRole) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{4}
+func (m *ReqEnterGs) Reset()         { *m = ReqEnterGs{} }
+func (m *ReqEnterGs) String() string { return proto.CompactTextString(m) }
+func (*ReqEnterGs) ProtoMessage()    {}
+func (*ReqEnterGs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_55ccd995fd75bbbc, []int{2}
 }
 
-func (m *RspGetRole) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RspGetRole.Unmarshal(m, b)
+func (m *ReqEnterGs) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReqEnterGs.Unmarshal(m, b)
 }
-func (m *RspGetRole) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RspGetRole.Marshal(b, m, deterministic)
+func (m *ReqEnterGs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReqEnterGs.Marshal(b, m, deterministic)
 }
-func (m *RspGetRole) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RspGetRole.Merge(m, src)
+func (m *ReqEnterGs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReqEnterGs.Merge(m, src)
 }
-func (m *RspGetRole) XXX_Size() int {
-	return xxx_messageInfo_RspGetRole.Size(m)
+func (m *ReqEnterGs) XXX_Size() int {
+	return xxx_messageInfo_ReqEnterGs.Size(m)
 }
-func (m *RspGetRole) XXX_DiscardUnknown() {
-	xxx_messageInfo_RspGetRole.DiscardUnknown(m)
+func (m *ReqEnterGs) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReqEnterGs.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_RspGetRole proto.InternalMessageInfo
+var xxx_messageInfo_ReqEnterGs proto.InternalMessageInfo
 
-func (m *RspGetRole) GetId() uint64 {
+func (m *ReqEnterGs) GetToken() string {
 	if m != nil {
-		return m.Id
+		return m.Token
+	}
+	return ""
+}
+
+func (m *ReqEnterGs) GetRoleId() string {
+	if m != nil {
+		return m.RoleId
+	}
+	return ""
+}
+
+//
+type RspEnterGs struct {
+	RetCode              int32    `protobuf:"varint,1,opt,name=retCode,proto3" json:"retCode,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RspEnterGs) Reset()         { *m = RspEnterGs{} }
+func (m *RspEnterGs) String() string { return proto.CompactTextString(m) }
+func (*RspEnterGs) ProtoMessage()    {}
+func (*RspEnterGs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_55ccd995fd75bbbc, []int{3}
+}
+
+func (m *RspEnterGs) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RspEnterGs.Unmarshal(m, b)
+}
+func (m *RspEnterGs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RspEnterGs.Marshal(b, m, deterministic)
+}
+func (m *RspEnterGs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RspEnterGs.Merge(m, src)
+}
+func (m *RspEnterGs) XXX_Size() int {
+	return xxx_messageInfo_RspEnterGs.Size(m)
+}
+func (m *RspEnterGs) XXX_DiscardUnknown() {
+	xxx_messageInfo_RspEnterGs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RspEnterGs proto.InternalMessageInfo
+
+func (m *RspEnterGs) GetRetCode() int32 {
+	if m != nil {
+		return m.RetCode
 	}
 	return 0
 }
 
-func (m *RspGetRole) GetInfo() *RoleInfo {
-	if m != nil {
-		return m.Info
-	}
-	return nil
-}
-
-//服务端推送角色信息改变
-type PushRole struct {
-	Info                 *RoleInfo `protobuf:"bytes,1,opt,name=info,proto3" json:"info,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
-}
-
-func (m *PushRole) Reset()         { *m = PushRole{} }
-func (m *PushRole) String() string { return proto.CompactTextString(m) }
-func (*PushRole) ProtoMessage()    {}
-func (*PushRole) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{5}
-}
-
-func (m *PushRole) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PushRole.Unmarshal(m, b)
-}
-func (m *PushRole) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PushRole.Marshal(b, m, deterministic)
-}
-func (m *PushRole) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PushRole.Merge(m, src)
-}
-func (m *PushRole) XXX_Size() int {
-	return xxx_messageInfo_PushRole.Size(m)
-}
-func (m *PushRole) XXX_DiscardUnknown() {
-	xxx_messageInfo_PushRole.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PushRole proto.InternalMessageInfo
-
-func (m *PushRole) GetInfo() *RoleInfo {
-	if m != nil {
-		return m.Info
-	}
-	return nil
-}
-
 func init() {
-	proto.RegisterType((*ReqGetRole)(nil), "proto.req_get_role")
 	proto.RegisterType((*RolePos)(nil), "proto.role_pos")
-	proto.RegisterType((*RoleAngle)(nil), "proto.role_angle")
-	proto.RegisterType((*RoleInfo)(nil), "proto.role_info")
-	proto.RegisterType((*RspGetRole)(nil), "proto.rsp_get_role")
-	proto.RegisterType((*PushRole)(nil), "proto.push_role")
+	proto.RegisterType((*RoleBaseInfo)(nil), "proto.role_base_info")
+	proto.RegisterType((*ReqEnterGs)(nil), "proto.req_enter_gs")
+	proto.RegisterType((*RspEnterGs)(nil), "proto.rsp_enter_gs")
 }
 
 func init() { proto.RegisterFile("server_client.proto", fileDescriptor_55ccd995fd75bbbc) }
 
 var fileDescriptor_55ccd995fd75bbbc = []byte{
-	// 243 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xcf, 0x4e, 0xc3, 0x30,
-	0x0c, 0xc6, 0x95, 0xae, 0x9d, 0xa8, 0x69, 0xa7, 0xc9, 0x80, 0xd4, 0x23, 0x8a, 0x38, 0x70, 0x9a,
-	0xc4, 0x9f, 0x47, 0xe0, 0xc2, 0x35, 0x0f, 0x40, 0x54, 0xa8, 0x19, 0x91, 0xd2, 0x26, 0x24, 0x65,
-	0xea, 0xf6, 0xf4, 0x28, 0x8e, 0xd8, 0x91, 0x93, 0xbf, 0x9f, 0xe3, 0xcf, 0x5f, 0x12, 0xb8, 0x8a,
-	0x14, 0x0e, 0x14, 0xf4, 0x87, 0x35, 0x34, 0xcd, 0x3b, 0x1f, 0xdc, 0xec, 0xb0, 0xe2, 0x22, 0x37,
-	0xd0, 0x04, 0xfa, 0xd6, 0x7b, 0x9a, 0x75, 0x70, 0x96, 0xe4, 0x33, 0x5c, 0xa4, 0xaa, 0xbd, 0x8b,
-	0xd8, 0x80, 0x58, 0x3a, 0x71, 0x2b, 0xee, 0x0b, 0x25, 0x96, 0x44, 0xc7, 0xae, 0xc8, 0x74, 0x4c,
-	0x74, 0xea, 0x56, 0x99, 0x4e, 0x52, 0x02, 0xb0, 0xab, 0x9f, 0xf6, 0x96, 0xf0, 0x1a, 0x2a, 0x16,
-	0xec, 0x6d, 0x55, 0x06, 0xf9, 0x06, 0x35, 0xcf, 0x98, 0xe9, 0xd3, 0x21, 0x42, 0x39, 0xf5, 0x63,
-	0x9e, 0xa8, 0x15, 0xeb, 0x64, 0xb3, 0x74, 0x20, 0xcb, 0x21, 0xad, 0xca, 0x80, 0x37, 0xb0, 0x1e,
-	0x7b, 0xaf, 0xcd, 0xc0, 0x69, 0xad, 0xaa, 0xc6, 0xde, 0xbf, 0x0e, 0xb8, 0x85, 0x15, 0x2d, 0xbe,
-	0x2b, 0xb9, 0x97, 0xa4, 0x7c, 0x81, 0x26, 0x44, 0x7f, 0x7e, 0x09, 0x6e, 0xa0, 0x30, 0x03, 0x07,
-	0x94, 0xaa, 0x30, 0x03, 0xde, 0x41, 0x99, 0xa2, 0x79, 0xfb, 0xe5, 0xe3, 0x36, 0x7f, 0xc3, 0xee,
-	0x7c, 0x25, 0xc5, 0xa7, 0xf2, 0x01, 0x6a, 0xff, 0x13, 0xbf, 0xf2, 0x8a, 0x3f, 0x8b, 0xf8, 0xcf,
-	0xf2, 0xbe, 0xe6, 0xf6, 0xd3, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xca, 0x37, 0x23, 0x86, 0x67,
-	0x01, 0x00, 0x00,
+	// 222 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x44, 0x90, 0x3d, 0x4f, 0xc3, 0x30,
+	0x10, 0x86, 0x95, 0xb6, 0x0e, 0xf4, 0x14, 0x10, 0x3a, 0x3e, 0xe4, 0x11, 0x65, 0xea, 0xc4, 0x02,
+	0x23, 0x1b, 0x53, 0x57, 0xff, 0x01, 0x2b, 0x6d, 0x0e, 0x14, 0x91, 0xd8, 0xe6, 0x6c, 0x55, 0x69,
+	0x7f, 0x3d, 0xf2, 0x39, 0x88, 0xc9, 0xef, 0x23, 0xf9, 0xfd, 0xd0, 0xc1, 0x7d, 0x24, 0x3e, 0x11,
+	0xdb, 0xe3, 0x38, 0x90, 0x4b, 0x2f, 0x81, 0x7d, 0xf2, 0xa8, 0xe4, 0x69, 0xdf, 0xe0, 0x9a, 0xfd,
+	0x48, 0x36, 0xf8, 0x88, 0x0d, 0x54, 0xb3, 0xae, 0x9e, 0xab, 0xdd, 0xca, 0x54, 0x73, 0xa6, 0xb3,
+	0x5e, 0x15, 0x3a, 0x67, 0xba, 0xe8, 0x75, 0xa1, 0x4b, 0x7b, 0x84, 0x5b, 0x71, 0x1d, 0xba, 0x48,
+	0x76, 0x70, 0x9f, 0x1e, 0x11, 0x36, 0xae, 0x9b, 0x48, 0xec, 0x5b, 0x23, 0x1a, 0x1f, 0x40, 0x8d,
+	0x74, 0xa2, 0x51, 0x52, 0x6e, 0x4c, 0x01, 0x7c, 0x84, 0x7a, 0xea, 0x82, 0x1d, 0x7a, 0x89, 0x53,
+	0x46, 0x4d, 0x5d, 0xd8, 0xf7, 0x78, 0x07, 0x6b, 0x9a, 0x83, 0xde, 0xc8, 0xd7, 0x2c, 0xdb, 0x77,
+	0x68, 0x98, 0x7e, 0x2c, 0xb9, 0x44, 0x6c, 0xbf, 0x62, 0x8e, 0x4b, 0xfe, 0x9b, 0xdc, 0xd2, 0x51,
+	0x00, 0x9f, 0xa0, 0xce, 0x53, 0xf6, 0xbd, 0xb4, 0x6c, 0xcd, 0x42, 0xed, 0x0e, 0x1a, 0x8e, 0xe1,
+	0xdf, 0xad, 0xe1, 0x8a, 0x29, 0x7d, 0xf8, 0xbe, 0x6c, 0x54, 0xe6, 0x0f, 0x0f, 0xb5, 0x5c, 0xe2,
+	0xf5, 0x37, 0x00, 0x00, 0xff, 0xff, 0xf7, 0xcb, 0xd5, 0x9d, 0x27, 0x01, 0x00, 0x00,
 }
