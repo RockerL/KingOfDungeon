@@ -17,6 +17,11 @@ type MapRole struct {
 	idx   int
 }
 
+//运行时地图块
+type MapChunk struct {
+	data *MapChunkData
+}
+
 //地图定义
 type Map struct {
 	*module.Skeleton
@@ -25,6 +30,8 @@ type Map struct {
 
 	roles     []*MapRole                //地图里容纳的最大角色
 	roleIndex *algorithm.IndexAllocator //分配器
+
+	chunks []MapChunk
 }
 
 func NewMap(id uint32) *Map {
@@ -34,8 +41,10 @@ func NewMap(id uint32) *Map {
 		closeSig:  make(chan bool, 0),
 		roles:     make([]*MapRole, conf.MapRoleMax),
 		roleIndex: algorithm.NewIndexAllocator(conf.MapRoleMax),
+		chunks:    make([]MapChunk, MaxChunkNum*MaxChunkNum),
 	}
 
+	//注册地图协程的消息处理函数
 	m.ChanRPCServer.Register("LoadMap", handleMapLoad)
 	m.ChanRPCServer.Register("RoleEnterMap", handleRoleEnterMap)
 	return m

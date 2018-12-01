@@ -17,7 +17,7 @@ func init() {
 //客户端断开
 func rpcCloseAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	a.SetUserData(-1)
+	a.SetUserData(nil)
 }
 
 //====================================================================================
@@ -31,7 +31,7 @@ func rpcDisconnectFromServer(args []interface{}) {
 
 //当地图协程加载完毕后通知
 func rpcMapLoaded(args []interface{}) {
-	mapId := args[0].(int32)
+	mapId := args[0].(uint32)
 	log.Debug("map loaded %v", mapId)
 
 	loadedMapCount++

@@ -33,12 +33,13 @@ func (m *Module) OnInit() {
 
 	sessionNum := len(conf.Server.MapLoad) * 2
 	//初始化数据连接
-	DBSession, err := mongodb.Dial(conf.Server.DBAddr, sessionNum)
-	if DBSession == nil {
+	dbSession, err := mongodb.Dial(conf.Server.DBAddr, sessionNum)
+	if dbSession == nil {
 		log.Error("can not connect mongodb ip %v err %v", conf.Server.DBAddr, err.Error())
 		return
 	} else {
 		log.Release("connect mongodb %v success", conf.Server.DBAddr)
+		DBSession = dbSession
 	}
 
 	//设置center server to game server 消息路由

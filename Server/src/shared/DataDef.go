@@ -18,7 +18,7 @@ type RoleData struct {
 	MapId  uint32        `bson:"MapId"`  //所在地图ID
 }
 
-const DBName = "game"
-const UserTableName = "user"
-const RoleTableName = "role"
+const DBName = "game"        //保存用户数据和角色数据
+const UserTableName = "user" //用户数据表名
+const RoleTableName = "role" //角色数据表名
 const MaxRoleNum = 8
