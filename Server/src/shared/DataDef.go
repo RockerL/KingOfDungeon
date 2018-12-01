@@ -1,24 +1,35 @@
 package shared
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"gopkg.in/mgo.v2/bson"
+	"shared/algorithm"
+)
 
-//用户信息，可以序列化到json
+//用户信息
 type UserData struct {
 	Id      string `bson:"Id"`      //运营商的用户ID
 	RoleNum uint32 `bson:"RoleNum"` //角色数量
 }
 
-//角色信息，可以序列化到json
+//角色信息
 type RoleData struct {
-	Id     bson.ObjectId `bson:"_id"`    //数据库ID
-	UserId string        `bson:"UserId"` //角色对应的用户ID
-	Name   string        `bson:"Name"`   //角色名字
-	Sex    uint32        `bson:"Sex"`    //性别
-	Level  uint32        `bson:"Level"`  //等级
-	MapId  uint32        `bson:"MapId"`  //所在地图ID
+	Id     bson.ObjectId     `bson:"_id"`    //数据库ID
+	UserId string            `bson:"UserId"` //角色对应的用户ID
+	Name   string            `bson:"Name"`   //角色名字
+	Sex    uint32            `bson:"Sex"`    //性别
+	Level  uint32            `bson:"Level"`  //等级
+	MapId  uint32            `bson:"MapId"`  //所在地图ID
+	Pos    algorithm.Vector3 `bson:"Pos"`    //当前位置
 }
 
 const DBName = "game"        //保存用户数据和角色数据
 const UserTableName = "user" //用户数据表名
 const RoleTableName = "role" //角色数据表名
-const MaxRoleNum = 8
+const MaxRoleNum = 8         //一个用户最多创建的角色数量
+
+const BlockSize = 4     //块的尺寸
+const BlockMaxY = 4     //游戏中高度方向上的块数量
+const ChunkBlockNum = 4 //组成区块中单边小块的数量
+const MaxChunkNum = 2   //地图中单边的区块数量
+const ChunkSize = ChunkBlockNum * BlockSize
+const WorldSize = ChunkSize * MaxChunkNum

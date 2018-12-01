@@ -16,19 +16,19 @@ func NewChunkDataWithFlat(id string, x int32, z int32) *MapChunkData {
 		ChunkId:    id,
 		ChunkX:     x,
 		ChunkZ:     z,
-		BlockArray: make([]BlockData, ChunkBlockNum*ChunkBlockNum*BlockMaxY),
+		BlockArray: make([]BlockData, shared.ChunkBlockNum*shared.ChunkBlockNum*shared.BlockMaxY),
 	}
 
-	for y := 0; y < BlockMaxY; y++ {
-		for z := 0; z < ChunkBlockNum; z++ {
-			for x := 0; x < ChunkBlockNum; x++ {
+	for y := 0; y < shared.BlockMaxY; y++ {
+		for z := 0; z < shared.ChunkBlockNum; z++ {
+			for x := 0; x < shared.ChunkBlockNum; x++ {
 				t := 0
-				if y < BlockMaxY/2 {
+				if y < shared.BlockMaxY/2 {
 					t = Earth
 				} else {
 					t = Air
 				}
-				idx := y*ChunkBlockNum*ChunkBlockNum + z*ChunkBlockNum + x
+				idx := y*shared.ChunkBlockNum*shared.ChunkBlockNum + z*shared.ChunkBlockNum + x
 				chunk.BlockArray[idx].BlockType = uint8(t)
 			}
 		}
@@ -47,8 +47,8 @@ func handleMapLoad(args []interface{}) {
 
 	mapCollectName := MapTableNamePrefix + strconv.Itoa(int(m.Id))
 
-	for chunkX := int32(0); chunkX < MaxChunkNum; chunkX++ {
-		for chunkZ := int32(0); chunkZ < MaxChunkNum; chunkZ++ {
+	for chunkX := int32(0); chunkX < shared.MaxChunkNum; chunkX++ {
+		for chunkZ := int32(0); chunkZ < shared.MaxChunkNum; chunkZ++ {
 			chunkName := fmt.Sprintf("%v_%v", chunkX, chunkZ)
 			chunkData := new(MapChunkData)
 
@@ -58,7 +58,7 @@ func handleMapLoad(args []interface{}) {
 				s.DB(WorldDBName).C(mapCollectName).Insert(chunkData)
 			}
 
-			m.chunks[chunkZ*MaxChunkNum+chunkX].data = chunkData
+			m.chunks[chunkZ*shared.MaxChunkNum+chunkX].data = chunkData
 		}
 	}
 

@@ -15,9 +15,6 @@ type MapChunkData struct {
 	BlockArray []BlockData `bson:"BlockArray"`
 }
 
-const BlockMaxY = 4               //游戏中高度方向上的块数量
-const ChunkBlockNum = 4           //组成区块中单边小块的数量
-const MaxChunkNum = 2             //地图中单边的区块数量
 const WorldDBName = "world"       //世界数据库名
 const MapTableNamePrefix = "map_" //地图块数据集合表名前缀
 

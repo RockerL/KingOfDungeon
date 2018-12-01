@@ -4,6 +4,7 @@ import (
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/log"
 	"gopkg.in/mgo.v2/bson"
+	"math/rand"
 	"proto"
 	"reflect"
 	"shared"
@@ -166,7 +167,7 @@ func handleCreateRole(args []interface{}) {
 		Name:   r.Name,
 		Sex:    r.Sex,
 		Level:  1,
-		MapId:  0,
+		MapId:  0, //=0表示随机进入某个地图某个位置
 	}
 
 	//写入数据库
@@ -235,35 +236,46 @@ func handleSelectRole(args []interface{}) {
 	r := args[0].(*proto.ReqSelectRole)
 	a := args[1].(gate.Agent)
 
+	rsp := &proto.RspSelectRole{}
+	s := dbSession.Ref()
+	defer func() {
+		dbSession.UnRef(s)
+		if rsp.RetCode > 0 {
+			a.WriteMsg(rsp)
+		}
+	}()
+
 	user, ok := loginAgentUsers[a]
 	if !ok {
-		a.WriteMsg(&proto.RspSelectRole{
-			RetCode: 1, //用户未登录
-			RoleId:  r.RoleId,
-		})
+		rsp.RetCode = 1 //用户未登录
 		return
 	}
-
-	s := dbSession.Ref()
-	defer dbSession.UnRef(s)
 
 	_id := bson.ObjectIdHex(r.RoleId)
 	var role = new(shared.RoleData)
 	err := s.DB(shared.DBName).C(shared.RoleTableName).Find(bson.M{"_id": _id}).One(&role)
 	if err != nil {
-		a.WriteMsg(&proto.RspSelectRole{
-			RetCode: 2, //没有找到角色数据
-			RoleId:  r.RoleId,
-		})
+		rsp.RetCode = 2 //无法查询到角色数据
 		return
 	}
 
 	if user.data.Id != role.UserId {
-		a.WriteMsg(&proto.RspSelectRole{
-			RetCode: 3, //角色数据和用户不对应
-			RoleId:  r.RoleId,
-		})
+		rsp.RetCode = 3 //角色数据和用户不对应
 		return
+	}
+
+	//检查地图是否需要随机
+	if role.MapId == 0 {
+		role.MapId = 1
+		role.Pos.X = rand.Float32() * shared.WorldSize
+		role.Pos.Z = rand.Float32() * shared.WorldSize
+		role.Pos.Y = 0
+
+		err := s.DB(shared.DBName).C(shared.RoleTableName).Update(bson.M{"_id": _id}, role)
+		if err != nil {
+			rsp.RetCode = 4 //无法更新角色地图和位置
+			return
+		}
 	}
 
 	user.state = EnterGS

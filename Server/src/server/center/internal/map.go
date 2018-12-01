@@ -41,7 +41,7 @@ func NewMap(id uint32) *Map {
 		closeSig:  make(chan bool, 0),
 		roles:     make([]*MapRole, conf.MapRoleMax),
 		roleIndex: algorithm.NewIndexAllocator(conf.MapRoleMax),
-		chunks:    make([]MapChunk, MaxChunkNum*MaxChunkNum),
+		chunks:    make([]MapChunk, shared.MaxChunkNum*shared.MaxChunkNum),
 	}
 
 	//注册地图协程的消息处理函数
