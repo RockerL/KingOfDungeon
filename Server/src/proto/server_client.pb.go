@@ -76,22 +76,104 @@ func (m *RolePos) GetZ() float32 {
 	return 0
 }
 
-//角色信息
-type RoleBaseInfo struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Level                uint32   `protobuf:"varint,2,opt,name=level,proto3" json:"level,omitempty"`
-	MapId                int32    `protobuf:"varint,3,opt,name=map_id,json=mapId,proto3" json:"map_id,omitempty"`
-	Exp                  uint32   `protobuf:"varint,4,opt,name=exp,proto3" json:"exp,omitempty"`
+//角色穿着
+type RoleOutlook struct {
+	Weapon               uint32   `protobuf:"varint,1,opt,name=weapon,proto3" json:"weapon,omitempty"`
+	Helm                 uint32   `protobuf:"varint,2,opt,name=helm,proto3" json:"helm,omitempty"`
+	Face                 uint32   `protobuf:"varint,3,opt,name=face,proto3" json:"face,omitempty"`
+	Wing                 uint32   `protobuf:"varint,4,opt,name=wing,proto3" json:"wing,omitempty"`
+	Bag                  uint32   `protobuf:"varint,5,opt,name=bag,proto3" json:"bag,omitempty"`
+	Suit                 uint32   `protobuf:"varint,6,opt,name=suit,proto3" json:"suit,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RoleOutlook) Reset()         { *m = RoleOutlook{} }
+func (m *RoleOutlook) String() string { return proto.CompactTextString(m) }
+func (*RoleOutlook) ProtoMessage()    {}
+func (*RoleOutlook) Descriptor() ([]byte, []int) {
+	return fileDescriptor_55ccd995fd75bbbc, []int{1}
+}
+
+func (m *RoleOutlook) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RoleOutlook.Unmarshal(m, b)
+}
+func (m *RoleOutlook) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RoleOutlook.Marshal(b, m, deterministic)
+}
+func (m *RoleOutlook) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RoleOutlook.Merge(m, src)
+}
+func (m *RoleOutlook) XXX_Size() int {
+	return xxx_messageInfo_RoleOutlook.Size(m)
+}
+func (m *RoleOutlook) XXX_DiscardUnknown() {
+	xxx_messageInfo_RoleOutlook.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RoleOutlook proto.InternalMessageInfo
+
+func (m *RoleOutlook) GetWeapon() uint32 {
+	if m != nil {
+		return m.Weapon
+	}
+	return 0
+}
+
+func (m *RoleOutlook) GetHelm() uint32 {
+	if m != nil {
+		return m.Helm
+	}
+	return 0
+}
+
+func (m *RoleOutlook) GetFace() uint32 {
+	if m != nil {
+		return m.Face
+	}
+	return 0
+}
+
+func (m *RoleOutlook) GetWing() uint32 {
+	if m != nil {
+		return m.Wing
+	}
+	return 0
+}
+
+func (m *RoleOutlook) GetBag() uint32 {
+	if m != nil {
+		return m.Bag
+	}
+	return 0
+}
+
+func (m *RoleOutlook) GetSuit() uint32 {
+	if m != nil {
+		return m.Suit
+	}
+	return 0
+}
+
+//角色基本信息
+type RoleBaseInfo struct {
+	Name                 string       `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Level                uint32       `protobuf:"varint,2,opt,name=level,proto3" json:"level,omitempty"`
+	LifePoint            uint32       `protobuf:"varint,3,opt,name=life_point,json=lifePoint,proto3" json:"life_point,omitempty"`
+	Pos                  *RolePos     `protobuf:"bytes,5,opt,name=pos,proto3" json:"pos,omitempty"`
+	RoleAngle            uint32       `protobuf:"varint,6,opt,name=role_angle,json=roleAngle,proto3" json:"role_angle,omitempty"`
+	Outlook              *RoleOutlook `protobuf:"bytes,7,opt,name=outlook,proto3" json:"outlook,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
 func (m *RoleBaseInfo) Reset()         { *m = RoleBaseInfo{} }
 func (m *RoleBaseInfo) String() string { return proto.CompactTextString(m) }
 func (*RoleBaseInfo) ProtoMessage()    {}
 func (*RoleBaseInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{1}
+	return fileDescriptor_55ccd995fd75bbbc, []int{2}
 }
 
 func (m *RoleBaseInfo) XXX_Unmarshal(b []byte) error {
@@ -126,21 +208,131 @@ func (m *RoleBaseInfo) GetLevel() uint32 {
 	return 0
 }
 
-func (m *RoleBaseInfo) GetMapId() int32 {
+func (m *RoleBaseInfo) GetLifePoint() uint32 {
 	if m != nil {
-		return m.MapId
+		return m.LifePoint
 	}
 	return 0
 }
 
-func (m *RoleBaseInfo) GetExp() uint32 {
+func (m *RoleBaseInfo) GetPos() *RolePos {
 	if m != nil {
-		return m.Exp
+		return m.Pos
+	}
+	return nil
+}
+
+func (m *RoleBaseInfo) GetRoleAngle() uint32 {
+	if m != nil {
+		return m.RoleAngle
 	}
 	return 0
 }
 
-//客户端请求进入服务器
+func (m *RoleBaseInfo) GetOutlook() *RoleOutlook {
+	if m != nil {
+		return m.Outlook
+	}
+	return nil
+}
+
+//块信息
+type BlockInfo struct {
+	BlockType            uint32   `protobuf:"varint,1,opt,name=BlockType,proto3" json:"BlockType,omitempty"`
+	SubType              uint32   `protobuf:"varint,2,opt,name=SubType,proto3" json:"SubType,omitempty"`
+	Durable              uint32   `protobuf:"varint,3,opt,name=Durable,proto3" json:"Durable,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *BlockInfo) Reset()         { *m = BlockInfo{} }
+func (m *BlockInfo) String() string { return proto.CompactTextString(m) }
+func (*BlockInfo) ProtoMessage()    {}
+func (*BlockInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_55ccd995fd75bbbc, []int{3}
+}
+
+func (m *BlockInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BlockInfo.Unmarshal(m, b)
+}
+func (m *BlockInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BlockInfo.Marshal(b, m, deterministic)
+}
+func (m *BlockInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BlockInfo.Merge(m, src)
+}
+func (m *BlockInfo) XXX_Size() int {
+	return xxx_messageInfo_BlockInfo.Size(m)
+}
+func (m *BlockInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_BlockInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BlockInfo proto.InternalMessageInfo
+
+func (m *BlockInfo) GetBlockType() uint32 {
+	if m != nil {
+		return m.BlockType
+	}
+	return 0
+}
+
+func (m *BlockInfo) GetSubType() uint32 {
+	if m != nil {
+		return m.SubType
+	}
+	return 0
+}
+
+func (m *BlockInfo) GetDurable() uint32 {
+	if m != nil {
+		return m.Durable
+	}
+	return 0
+}
+
+//区块信息
+type ChunkInfo struct {
+	Blocks               []*BlockInfo `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *ChunkInfo) Reset()         { *m = ChunkInfo{} }
+func (m *ChunkInfo) String() string { return proto.CompactTextString(m) }
+func (*ChunkInfo) ProtoMessage()    {}
+func (*ChunkInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_55ccd995fd75bbbc, []int{4}
+}
+
+func (m *ChunkInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ChunkInfo.Unmarshal(m, b)
+}
+func (m *ChunkInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ChunkInfo.Marshal(b, m, deterministic)
+}
+func (m *ChunkInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ChunkInfo.Merge(m, src)
+}
+func (m *ChunkInfo) XXX_Size() int {
+	return xxx_messageInfo_ChunkInfo.Size(m)
+}
+func (m *ChunkInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_ChunkInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ChunkInfo proto.InternalMessageInfo
+
+func (m *ChunkInfo) GetBlocks() []*BlockInfo {
+	if m != nil {
+		return m.Blocks
+	}
+	return nil
+}
+
+//客户端请求让角色进入服务器地图
 type ReqEnterGs struct {
 	Token                string   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	RoleId               string   `protobuf:"bytes,2,opt,name=roleId,proto3" json:"roleId,omitempty"`
@@ -153,7 +345,7 @@ func (m *ReqEnterGs) Reset()         { *m = ReqEnterGs{} }
 func (m *ReqEnterGs) String() string { return proto.CompactTextString(m) }
 func (*ReqEnterGs) ProtoMessage()    {}
 func (*ReqEnterGs) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{2}
+	return fileDescriptor_55ccd995fd75bbbc, []int{5}
 }
 
 func (m *ReqEnterGs) XXX_Unmarshal(b []byte) error {
@@ -188,19 +380,22 @@ func (m *ReqEnterGs) GetRoleId() string {
 	return ""
 }
 
-//
+//同步给客户端进入地图的信息
 type RspEnterGs struct {
-	RetCode              int32    `protobuf:"varint,1,opt,name=retCode,proto3" json:"retCode,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	RetCode              int32         `protobuf:"varint,1,opt,name=retCode,proto3" json:"retCode,omitempty"`
+	MainRoleIdx          int32         `protobuf:"varint,2,opt,name=mainRoleIdx,proto3" json:"mainRoleIdx,omitempty"`
+	MainRole             *RoleBaseInfo `protobuf:"bytes,3,opt,name=mainRole,proto3" json:"mainRole,omitempty"`
+	Chunks               []*ChunkInfo  `protobuf:"bytes,4,rep,name=chunks,proto3" json:"chunks,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
 }
 
 func (m *RspEnterGs) Reset()         { *m = RspEnterGs{} }
 func (m *RspEnterGs) String() string { return proto.CompactTextString(m) }
 func (*RspEnterGs) ProtoMessage()    {}
 func (*RspEnterGs) Descriptor() ([]byte, []int) {
-	return fileDescriptor_55ccd995fd75bbbc, []int{3}
+	return fileDescriptor_55ccd995fd75bbbc, []int{6}
 }
 
 func (m *RspEnterGs) XXX_Unmarshal(b []byte) error {
@@ -228,9 +423,33 @@ func (m *RspEnterGs) GetRetCode() int32 {
 	return 0
 }
 
+func (m *RspEnterGs) GetMainRoleIdx() int32 {
+	if m != nil {
+		return m.MainRoleIdx
+	}
+	return 0
+}
+
+func (m *RspEnterGs) GetMainRole() *RoleBaseInfo {
+	if m != nil {
+		return m.MainRole
+	}
+	return nil
+}
+
+func (m *RspEnterGs) GetChunks() []*ChunkInfo {
+	if m != nil {
+		return m.Chunks
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*RolePos)(nil), "proto.role_pos")
+	proto.RegisterType((*RoleOutlook)(nil), "proto.role_outlook")
 	proto.RegisterType((*RoleBaseInfo)(nil), "proto.role_base_info")
+	proto.RegisterType((*BlockInfo)(nil), "proto.block_info")
+	proto.RegisterType((*ChunkInfo)(nil), "proto.chunk_info")
 	proto.RegisterType((*ReqEnterGs)(nil), "proto.req_enter_gs")
 	proto.RegisterType((*RspEnterGs)(nil), "proto.rsp_enter_gs")
 }
@@ -238,19 +457,34 @@ func init() {
 func init() { proto.RegisterFile("server_client.proto", fileDescriptor_55ccd995fd75bbbc) }
 
 var fileDescriptor_55ccd995fd75bbbc = []byte{
-	// 222 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x44, 0x90, 0x3d, 0x4f, 0xc3, 0x30,
-	0x10, 0x86, 0x95, 0xb6, 0x0e, 0xf4, 0x14, 0x10, 0x3a, 0x3e, 0xe4, 0x11, 0x65, 0xea, 0xc4, 0x02,
-	0x23, 0x1b, 0x53, 0x57, 0xff, 0x01, 0x2b, 0x6d, 0x0e, 0x14, 0x91, 0xd8, 0xe6, 0x6c, 0x55, 0x69,
-	0x7f, 0x3d, 0xf2, 0x39, 0x88, 0xc9, 0xef, 0x23, 0xf9, 0xfd, 0xd0, 0xc1, 0x7d, 0x24, 0x3e, 0x11,
-	0xdb, 0xe3, 0x38, 0x90, 0x4b, 0x2f, 0x81, 0x7d, 0xf2, 0xa8, 0xe4, 0x69, 0xdf, 0xe0, 0x9a, 0xfd,
-	0x48, 0x36, 0xf8, 0x88, 0x0d, 0x54, 0xb3, 0xae, 0x9e, 0xab, 0xdd, 0xca, 0x54, 0x73, 0xa6, 0xb3,
-	0x5e, 0x15, 0x3a, 0x67, 0xba, 0xe8, 0x75, 0xa1, 0x4b, 0x7b, 0x84, 0x5b, 0x71, 0x1d, 0xba, 0x48,
-	0x76, 0x70, 0x9f, 0x1e, 0x11, 0x36, 0xae, 0x9b, 0x48, 0xec, 0x5b, 0x23, 0x1a, 0x1f, 0x40, 0x8d,
-	0x74, 0xa2, 0x51, 0x52, 0x6e, 0x4c, 0x01, 0x7c, 0x84, 0x7a, 0xea, 0x82, 0x1d, 0x7a, 0x89, 0x53,
-	0x46, 0x4d, 0x5d, 0xd8, 0xf7, 0x78, 0x07, 0x6b, 0x9a, 0x83, 0xde, 0xc8, 0xd7, 0x2c, 0xdb, 0x77,
-	0x68, 0x98, 0x7e, 0x2c, 0xb9, 0x44, 0x6c, 0xbf, 0x62, 0x8e, 0x4b, 0xfe, 0x9b, 0xdc, 0xd2, 0x51,
-	0x00, 0x9f, 0xa0, 0xce, 0x53, 0xf6, 0xbd, 0xb4, 0x6c, 0xcd, 0x42, 0xed, 0x0e, 0x1a, 0x8e, 0xe1,
-	0xdf, 0xad, 0xe1, 0x8a, 0x29, 0x7d, 0xf8, 0xbe, 0x6c, 0x54, 0xe6, 0x0f, 0x0f, 0xb5, 0x5c, 0xe2,
-	0xf5, 0x37, 0x00, 0x00, 0xff, 0xff, 0xf7, 0xcb, 0xd5, 0x9d, 0x27, 0x01, 0x00, 0x00,
+	// 451 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x52, 0xcb, 0x8e, 0xd3, 0x30,
+	0x14, 0x55, 0xa6, 0x4d, 0x3b, 0xb9, 0x6d, 0x79, 0x78, 0x00, 0x79, 0x01, 0x52, 0xc9, 0x6a, 0x58,
+	0x30, 0x12, 0x05, 0x89, 0x0d, 0x1b, 0x1e, 0x1b, 0x76, 0xc8, 0xb0, 0x26, 0x4a, 0x3a, 0xb7, 0x9d,
+	0xa8, 0xae, 0x1d, 0x62, 0x67, 0xa6, 0x9d, 0x2f, 0xe0, 0x53, 0xf8, 0x16, 0xbe, 0x0a, 0xdd, 0x6b,
+	0xa7, 0x2d, 0xab, 0xdc, 0x73, 0xee, 0x23, 0xe7, 0x1c, 0x19, 0x2e, 0x1c, 0xb6, 0xb7, 0xd8, 0x16,
+	0x4b, 0x5d, 0xa3, 0xf1, 0x57, 0x4d, 0x6b, 0xbd, 0x15, 0x29, 0x7f, 0xf2, 0x77, 0x70, 0xde, 0x5a,
+	0x8d, 0x45, 0x63, 0x9d, 0x98, 0x42, 0xb2, 0x93, 0xc9, 0x3c, 0xb9, 0x3c, 0x53, 0xc9, 0x8e, 0xd0,
+	0x5e, 0x9e, 0x05, 0xb4, 0x27, 0x74, 0x2f, 0x07, 0x01, 0xdd, 0xe7, 0xbf, 0x13, 0x98, 0xf2, 0x9a,
+	0xed, 0xbc, 0xb6, 0x76, 0x23, 0x9e, 0xc1, 0xe8, 0x0e, 0xcb, 0xc6, 0x1a, 0xde, 0x9f, 0xa9, 0x88,
+	0x84, 0x80, 0xe1, 0x0d, 0xea, 0x2d, 0xdf, 0x99, 0x29, 0xae, 0x89, 0x5b, 0x95, 0x4b, 0xe4, 0x6b,
+	0x33, 0xc5, 0x35, 0x71, 0x77, 0xb5, 0x59, 0xcb, 0x61, 0xe0, 0xa8, 0x16, 0x8f, 0x60, 0x50, 0x95,
+	0x6b, 0x99, 0x32, 0x45, 0x25, 0x4d, 0xb9, 0xae, 0xf6, 0x72, 0x14, 0xa6, 0xa8, 0xce, 0xff, 0x26,
+	0xf0, 0x80, 0xa5, 0x54, 0xa5, 0xc3, 0xa2, 0x36, 0x2b, 0x4b, 0x63, 0xa6, 0xdc, 0x22, 0x4b, 0xc9,
+	0x14, 0xd7, 0xe2, 0x09, 0xa4, 0x1a, 0x6f, 0x51, 0x47, 0x25, 0x01, 0x88, 0x17, 0x00, 0xba, 0x5e,
+	0x91, 0xfb, 0xda, 0xf8, 0x28, 0x28, 0x23, 0xe6, 0x1b, 0x11, 0xe2, 0x25, 0x0c, 0x1a, 0xeb, 0x58,
+	0xc1, 0x64, 0xf1, 0x30, 0x04, 0x77, 0xd5, 0xc7, 0xa5, 0xa8, 0x47, 0x17, 0x98, 0x28, 0xcd, 0x5a,
+	0x63, 0x14, 0x96, 0x11, 0xf3, 0x91, 0x08, 0xf1, 0x1a, 0xc6, 0x31, 0x22, 0x39, 0xe6, 0x2b, 0x17,
+	0xa7, 0x57, 0x62, 0x4b, 0xf5, 0x33, 0xf9, 0x4f, 0x80, 0x4a, 0xdb, 0xe5, 0x26, 0xf8, 0x78, 0x0e,
+	0xd9, 0x27, 0x42, 0x3f, 0xf6, 0x0d, 0xc6, 0x5c, 0x8f, 0x84, 0x90, 0x30, 0xfe, 0xde, 0x55, 0xdc,
+	0x0b, 0x9e, 0x7a, 0x48, 0x9d, 0x2f, 0x5d, 0x5b, 0x56, 0xba, 0xcf, 0xb8, 0x87, 0xf9, 0x7b, 0x80,
+	0xe5, 0x4d, 0x67, 0xe2, 0xfd, 0x57, 0x30, 0xe2, 0xbf, 0x39, 0x99, 0xcc, 0x07, 0x97, 0x93, 0xc5,
+	0xe3, 0xa8, 0xed, 0x28, 0x41, 0xc5, 0x81, 0xfc, 0x03, 0x4c, 0x5b, 0xfc, 0x55, 0xa0, 0xf1, 0xd8,
+	0x16, 0x6b, 0x47, 0x71, 0x7a, 0xbb, 0x41, 0x13, 0x33, 0x0e, 0x80, 0x5e, 0x01, 0xf9, 0xfa, 0x7a,
+	0xcd, 0x8a, 0x32, 0x15, 0x51, 0xfe, 0x87, 0x9e, 0x8b, 0x6b, 0x8e, 0xeb, 0x12, 0xc6, 0x2d, 0xfa,
+	0xcf, 0xf6, 0x3a, 0xf8, 0x4a, 0x55, 0x0f, 0xc5, 0x1c, 0x26, 0xdb, 0xb2, 0x36, 0x8a, 0x17, 0x77,
+	0x7c, 0x27, 0x55, 0xa7, 0x94, 0x78, 0x03, 0xe7, 0x3d, 0x64, 0x7b, 0x93, 0xc5, 0xd3, 0xd3, 0x4c,
+	0x0f, 0xcf, 0x40, 0x1d, 0xc6, 0xc8, 0x28, 0xdb, 0x76, 0x72, 0xf8, 0x9f, 0xd1, 0x63, 0x16, 0x2a,
+	0x0e, 0x54, 0x23, 0xee, 0xbc, 0xfd, 0x17, 0x00, 0x00, 0xff, 0xff, 0x97, 0xab, 0xcf, 0x4c, 0x34,
+	0x03, 0x00, 0x00,
 }

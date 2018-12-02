@@ -11,11 +11,11 @@ import (
 )
 
 //按照大平地生成地形
-func NewChunkDataWithFlat(id string, x int32, z int32) *MapChunkData {
+func NewChunkDataWithFlat(id string, chunkX int32, chunkZ int32) *MapChunkData {
 	chunk := &MapChunkData{
 		ChunkId:    id,
-		ChunkX:     x,
-		ChunkZ:     z,
+		ChunkX:     chunkX,
+		ChunkZ:     chunkZ,
 		BlockArray: make([]BlockData, shared.ChunkBlockNum*shared.ChunkBlockNum*shared.BlockMaxY),
 	}
 
@@ -74,7 +74,7 @@ func handleRoleEnterMap(args []interface{}) {
 	rsp := &proto.RspEnterGs{}
 	roleIdx := m.roleIndex.Alloc()
 	if roleIdx < 0 {
-		rsp.RetCode = 4
+		rsp.RetCode = 4 //地图人满
 		agent.WriteMsg(rsp)
 		return
 	}
@@ -83,14 +83,12 @@ func handleRoleEnterMap(args []interface{}) {
 	r := &MapRole{
 		m:     m,
 		data:  roleData,
-		idx:   roleIdx,
+		idx:   int32(roleIdx),
 		agent: agent,
 	}
 
 	m.roles[roleIdx] = r
 	agent.SetUserData(r)
 
-	//返回给客户端
-	rsp.RetCode = 0
-	agent.WriteMsg(rsp)
+	m.RoleEnter(agent)
 }

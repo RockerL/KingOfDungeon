@@ -3,29 +3,56 @@
 package proto;
 
 //角色位置
-message role_pos{
+message role_pos {
 	float x = 1;
 	float y = 2;
 	float z = 3;
 }
 
-//角色信息
-message role_base_info{
-	string name = 1;	//名字
-	uint32 level = 2;	//等级
-	int32 map_id = 3;	//地图id
-	uint32 exp = 4;		//经验
+//角色穿着
+message role_outlook {
+	uint32 weapon = 1;         //拿的武器 = 0空手
+	uint32 helm = 2;           //头盔=0 未戴
+	uint32 face = 3;           //表情=0 默认
+	uint32 wing = 4;           //翅膀=0 未戴
+	uint32 bag = 5;            //背包=0 未戴
+	uint32 suit = 6;           //外套=0 未戴
 }
 
-//客户端请求进入服务器
-message req_enter_gs{	
+//角色基本信息
+message role_base_info {
+	string name = 1;		//名字
+	uint32 level = 2;		//等级
+	uint32 life_point = 3;		//生命值
+	role_pos pos = 5;		//位置
+	uint32 role_angle = 6;		//方向
+	role_outlook outlook = 7;	//穿着
+}
+
+//块信息
+message block_info {
+	uint32	BlockType = 1;
+	uint32	SubType = 2;
+	uint32	Durable = 3;
+}
+
+//区块信息
+message chunk_info {
+	repeated block_info blocks = 1;		//块集合
+}
+
+//客户端请求让角色进入服务器地图
+message req_enter_gs {	
 	string	token = 1;	//令牌
 	string	roleId = 2;	//要选择的角色
 }
 
-//
-message rsp_enter_gs{
-	int32	retCode = 1;
+//同步给客户端进入地图的信息
+message rsp_enter_gs {
+	int32		retCode = 1;
+	int32		mainRoleIdx = 2;		//控制角色的ID和信息
+	role_base_info	mainRole = 3;
+	repeated chunk_info chunks = 4;			//周围区块的信息
 }
 
 
