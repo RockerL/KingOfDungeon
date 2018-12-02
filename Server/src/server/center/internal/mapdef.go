@@ -1,5 +1,7 @@
 package internal
 
+import "shared"
+
 //地图块数据定义
 type BlockData struct {
 	BlockType uint8  `bson:"Type"`
@@ -9,10 +11,10 @@ type BlockData struct {
 
 //地图区块数据定义
 type MapChunkData struct {
-	ChunkId    string      `bson:"Id"`
-	ChunkX     int32       `bson:"ChunkX"`
-	ChunkZ     int32       `bson:"ChunkZ"`
-	BlockArray []BlockData `bson:"BlockArray"`
+	ChunkId    string                            `bson:"Id"`
+	ChunkX     int32                             `bson:"ChunkX"`
+	ChunkZ     int32                             `bson:"ChunkZ"`
+	BlockArray [shared.ChunkBlockTotal]BlockData `bson:"BlockArray"`
 }
 
 const WorldDBName = "world"       //世界数据库名

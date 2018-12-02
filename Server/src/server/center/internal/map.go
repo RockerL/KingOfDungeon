@@ -1,13 +1,17 @@
 package internal
 
 import (
+	"fmt"
+	"github.com/name5566/leaf/db/mongodb"
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/module"
+	"gopkg.in/mgo.v2/bson"
 	"proto"
 	"server/base"
 	"server/conf"
 	"shared"
 	"shared/algorithm"
+	"strconv"
 )
 
 //运行时地图定义
@@ -19,17 +23,21 @@ type Map struct {
 	roles     []*MapRole                //地图里容纳的最大角色
 	roleIndex *algorithm.IndexAllocator //角色索引分配器
 
-	chunks []MapChunk //地图的所有运行时区块
+	chunks [shared.MapTotalChunk]MapChunk //地图的所有运行时区块
+
+	collectionName string           //地图的数据库集合名
+	dbSession      *mongodb.Session //数据库会话，一个map协程一个
 }
 
 func NewMap(id uint32) *Map {
 	m := &Map{
-		Id:        id,
-		Skeleton:  base.NewSkeleton(),
-		closeSig:  make(chan bool, 0),
-		roles:     make([]*MapRole, conf.MapRoleMax),
-		roleIndex: algorithm.NewIndexAllocator(conf.MapRoleMax),
-		chunks:    make([]MapChunk, shared.MaxChunkNum*shared.MaxChunkNum),
+		Id:             id,
+		Skeleton:       base.NewSkeleton(),
+		closeSig:       make(chan bool, 0),
+		roles:          make([]*MapRole, conf.MapRoleMax),
+		roleIndex:      algorithm.NewIndexAllocator(conf.MapRoleMax),
+		collectionName: MapTableNamePrefix + strconv.Itoa(int(id)),
+		dbSession:      DBSession.Ref(),
 	}
 
 	//注册地图协程的消息处理函数
@@ -43,9 +51,10 @@ func (m *Map) OnInit() {
 }
 
 func (m *Map) OnDestroy() {
-
+	DBSession.UnRef(m.dbSession)
 }
 
+//获取区块，如果没有初始化则初始化
 func (m *Map) GetChunk(chunkX int32, chunkZ int32) *MapChunk {
 	if chunkX < 0 || chunkZ < 0 ||
 		chunkX >= shared.MaxChunkNum ||
@@ -54,8 +63,19 @@ func (m *Map) GetChunk(chunkX int32, chunkZ int32) *MapChunk {
 	}
 
 	chunkIdx := chunkZ*shared.MaxChunkNum + chunkX
+	chunk := &m.chunks[chunkIdx]
 
-	return &m.chunks[chunkIdx]
+	if chunk.data.ChunkId == "" {
+		chunkName := fmt.Sprintf("%v_%v", chunkX, chunkZ)
+		chunkData := &chunk.data
+		err := m.dbSession.DB(WorldDBName).C(m.collectionName).Find(bson.M{"Id": chunkName}).One(&chunkData)
+		if err != nil {
+			chunk.InitChunkWithFlat(chunkName, chunkX, chunkZ)
+			m.dbSession.DB(WorldDBName).C(m.collectionName).Insert(chunkData)
+		}
+	}
+
+	return chunk
 }
 
 func (m *Map) RoleEnter(agent gate.Agent) {
@@ -65,6 +85,8 @@ func (m *Map) RoleEnter(agent gate.Agent) {
 	//确定起始同步的chunk索引
 	chunkX := int32(mapRole.data.Pos.X / shared.ChunkSize)
 	chunkZ := int32(mapRole.data.Pos.Z / shared.ChunkSize)
+
+	roleChunk := m.GetChunk(chunkX, chunkZ)
 
 	startChunkX := chunkX - 1
 	startChunkZ := chunkZ - 1
@@ -89,4 +111,6 @@ func (m *Map) RoleEnter(agent gate.Agent) {
 	}
 
 	agent.WriteMsg(rsp)
+
+	mapRole.ChangeChunk(nil, roleChunk)
 }

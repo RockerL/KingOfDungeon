@@ -1,23 +1,22 @@
 package algorithm
 
-type LinkList struct {
-	node
-	dummyHead *node  //虚拟头节点
-	maxSize   int    //最大节点个数
-	array     []node //节点容器
-	size      int    //有效节点个数
+type DoubleList struct {
+	dummyHead *DNode  //虚拟头节点
+	maxSize   int     //最大节点个数
+	array     []DNode //节点容器
+	size      int     //有效节点个数
 }
 
-type node struct {
+type DNode struct {
 	Index int
-	Next  *node
-	Prev  *node
+	Next  *DNode
+	Prev  *DNode
 }
 
-func NewLinkList(maxSize int) *LinkList {
-	l := &LinkList{
-		dummyHead: &node{-1, nil, nil},
-		array:     make([]node, maxSize),
+func NewLinkList(maxSize int) *DoubleList {
+	l := &DoubleList{
+		dummyHead: &DNode{-1, nil, nil},
+		array:     make([]DNode, maxSize),
 		maxSize:   maxSize,
 		size:      0,
 	}
@@ -29,16 +28,16 @@ func NewLinkList(maxSize int) *LinkList {
 	return l
 }
 
-func (link *LinkList) MaxSize() int {
+func (link *DoubleList) MaxSize() int {
 	return link.maxSize
 }
 
-func (link *LinkList) Size() int {
+func (link *DoubleList) Size() int {
 	return link.size
 }
 
 //根据值来移除节点
-func (link *LinkList) Remove(index int) bool {
+func (link *DoubleList) Remove(index int) bool {
 	if index < 0 || index > link.maxSize {
 		panic("remove out of range")
 		return false
@@ -66,7 +65,7 @@ func (link *LinkList) Remove(index int) bool {
 	return true
 }
 
-func (link *LinkList) RemoveFirst() {
+func (link *DoubleList) RemoveFirst() {
 	if link.dummyHead.Next == nil {
 		return
 	}
@@ -74,7 +73,7 @@ func (link *LinkList) RemoveFirst() {
 	link.Remove(link.dummyHead.Next.Index)
 }
 
-func (link *LinkList) Add(index int) {
+func (link *DoubleList) Add(index int) {
 	if index < 0 || index > link.maxSize {
 		panic("add out of range")
 		return
@@ -93,7 +92,7 @@ func (link *LinkList) Add(index int) {
 	link.size++
 }
 
-func (link *LinkList) GetFirst() int {
+func (link *DoubleList) GetFirst() int {
 	if link.dummyHead.Next == nil {
 		return link.dummyHead.Index
 	}

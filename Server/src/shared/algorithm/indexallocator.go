@@ -1,8 +1,8 @@
 package algorithm
 
 type IndexAllocator struct {
-	useList  *LinkList
-	freeList *LinkList
+	useList  *DoubleList
+	freeList *DoubleList
 }
 
 //新建一个索引分配器，传入为索引值最大值+1
