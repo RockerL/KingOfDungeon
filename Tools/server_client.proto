@@ -55,8 +55,27 @@ message rsp_enter_gs {
 	repeated chunk_info chunks = 4;			//周围区块的信息
 }
 
+//同步某个角色进入同步范围
+message sync_role_enter_range {
+	int32		roleIdx = 1;
+	role_base_info	roleBaseInfo = 2;
+}
 
+//同步某个角色离开同步范围
+message sync_role_leave_range {
+	int32		roleIdx = 1;
+}
 
+//客户端请求同步位置、方向、动作
+message req_role_action {
+	role_pos	pos = 1;		//位置
+	uint32		role_angle = 2;		//方向
+	uint32		action = 3;		//动作表现
+}
 
-
-
+message sync_role_action {
+	int32		roleIdx = 1;
+	role_pos	pos = 2;		//位置
+	uint32		role_angle = 3;		//方向
+	uint32		action = 4;		//动作表现
+}

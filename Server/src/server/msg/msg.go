@@ -15,6 +15,7 @@ func init() {
 
 	//client to game server
 	CLProcessor.Register(&proto.ReqEnterGs{})
+	CLProcessor.Register(&proto.ReqRoleAction{})
 
 	//game server to client
 	CLProcessor.Register(&proto.RspEnterGs{})

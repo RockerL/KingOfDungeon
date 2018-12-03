@@ -4,11 +4,10 @@ import (
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/log"
 	"proto"
-	"shared"
 )
 
 //处理地图初始化加载
-func handleMapLoad(args []interface{}) {
+func mapHandleMapLoad(args []interface{}) {
 	m := args[0].(*Map)
 	log.Debug("handle map %v loading", m.Id)
 
@@ -16,29 +15,16 @@ func handleMapLoad(args []interface{}) {
 }
 
 //处理角色进入地图请求
-func handleRoleEnterMap(args []interface{}) {
-	m := args[0].(*Map)
-	roleData := args[1].(*shared.RoleData)
-	agent := args[2].(gate.Agent)
+func mapHandleRoleEnterMap(args []interface{}) {
+	a := args[0].(gate.Agent)
+	m := a.UserData().(*MapRole).m
+	m.RoleEnter(a)
+}
 
-	rsp := &proto.RspEnterGs{}
-	roleIdx := m.roleIndex.Alloc()
-	if roleIdx < 0 {
-		rsp.RetCode = 4 //地图人满
-		agent.WriteMsg(rsp)
-		return
-	}
-
-	//把角色绑定到Agent
-	r := &MapRole{
-		m:     m,
-		data:  roleData,
-		idx:   int32(roleIdx),
-		agent: agent,
-	}
-
-	m.roles[roleIdx] = r
-	agent.SetUserData(r)
-
-	m.RoleEnter(agent)
+//处理角色位置，方向，动作
+func mapHandleRoleAction(args []interface{}) {
+	r := args[0].(*proto.ReqRoleAction)
+	a := args[1].(gate.Agent)
+	role := a.UserData().(*MapRole)
+	role.handleRoleAction(r)
 }

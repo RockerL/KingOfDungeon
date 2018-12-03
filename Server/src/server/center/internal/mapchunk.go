@@ -57,9 +57,16 @@ func (c *MapChunk) AddRole(role *MapRole) {
 }
 
 func (c *MapChunk) OnRoleLeave(role *MapRole) {
-
+	//遍历角色同步离开信息
+	c.roles.Traversal(func(v algorithm.ElemType) {
+		r := v.(*MapRole)
+		role.OnRoleLeave(r)
+	})
 }
 
 func (c *MapChunk) OnRoleEnter(role *MapRole) {
-
+	c.roles.Traversal(func(v algorithm.ElemType) {
+		r := v.(*MapRole)
+		role.OnRoleEnter(r)
+	})
 }

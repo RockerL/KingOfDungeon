@@ -15,6 +15,7 @@ func handleMsg(m interface{}, h interface{}) {
 
 func init() {
 	handleMsg(&proto.ReqEnterGs{}, handleEnterGS)
+	handleMsg(&proto.ReqRoleAction{}, handleRoleAction)
 }
 
 //处理客户端请求进入游戏服务器
@@ -52,15 +53,42 @@ func handleEnterGS(args []interface{}) {
 	}
 
 	_id := bson.ObjectIdHex(r.RoleId)
-	var role = new(shared.RoleData)
-	err := s.DB(shared.DBName).C(shared.RoleTableName).Find(bson.M{"_id": _id}).One(&role)
+	var roleData = new(shared.RoleData)
+	err := s.DB(shared.DBName).C(shared.RoleTableName).Find(bson.M{"_id": _id}).One(&roleData)
 	if err != nil {
 		rsp.RetCode = 3
 		a.WriteMsg(rsp)
 		return
 	}
 
+	m, ok := Maps[roleData.MapId]
+	roleIdx := m.roleIndex.Alloc()
+	if roleIdx < 0 {
+		rsp.RetCode = 4 //地图人满
+		a.WriteMsg(rsp)
+		return
+	}
+
+	//把角色绑定到Agent
+	role := &MapRole{
+		m:     m,
+		data:  roleData,
+		idx:   int32(roleIdx),
+		agent: a,
+	}
+
+	m.roles[roleIdx] = role
+	a.SetUserData(r)
+
 	//发消息给地图协程
-	m, ok := Maps[role.MapId]
-	m.ChanRPCServer.Go("RoleEnterMap", m, role, a)
+	m.ChanRPCServer.Go("RoleEnterMap", a)
+}
+
+//处理角色的动作，位置，方向同步
+func handleRoleAction(args []interface{}) {
+	a := args[1].(gate.Agent)
+	mapRole := a.UserData().(*MapRole)
+	if mapRole != nil {
+		mapRole.m.ChanRPCServer.Go("RoleAction", args)
+	}
 }

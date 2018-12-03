@@ -41,8 +41,10 @@ func NewMap(id uint32) *Map {
 	}
 
 	//注册地图协程的消息处理函数
-	m.ChanRPCServer.Register("LoadMap", handleMapLoad)
-	m.ChanRPCServer.Register("RoleEnterMap", handleRoleEnterMap)
+	m.ChanRPCServer.Register("LoadMap", mapHandleMapLoad)
+	m.ChanRPCServer.Register("RoleEnterMap", mapHandleRoleEnterMap)
+	m.ChanRPCServer.Register("RoleAction", mapHandleRoleAction)
+
 	return m
 }
 
@@ -113,4 +115,24 @@ func (m *Map) RoleEnter(agent gate.Agent) {
 	agent.WriteMsg(rsp)
 
 	mapRole.ChangeChunk(nil, roleChunk)
+}
+
+//广播消息给角色周围的区块
+func (m *Map) BroadcastAroundRole(role *MapRole, msg interface{}) {
+	chunkStartX := role.c.data.ChunkX - int32(shared.ClientChunkNum)/2
+	chunkStartZ := role.c.data.ChunkZ - int32(shared.ClientChunkNum)/2
+
+	for z := chunkStartZ; z < chunkStartZ+shared.ClientChunkNum; z++ {
+		for x := chunkStartX; x < chunkStartX+shared.ClientChunkNum; x++ {
+			chunk := m.GetChunk(x, z)
+			if chunk != nil {
+				chunk.roles.Traversal(func(v algorithm.ElemType) {
+					r := v.(*MapRole)
+					if r != role {
+						r.agent.WriteMsg(msg)
+					}
+				})
+			}
+		}
+	}
 }
