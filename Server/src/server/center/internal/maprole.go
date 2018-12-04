@@ -12,7 +12,7 @@ type MapRole struct {
 	c      *MapChunk        //地图区块
 	data   *shared.RoleData //角色数据
 	agent  gate.Agent       //角色对应网络客户端连接
-	idx    int32            //角色在地图里的索引
+	idx    int32            //角色在地图里的索引，地图里唯一
 	action uint32           //角色当前动作
 }
 
@@ -29,12 +29,12 @@ func (r *MapRole) MakeBaseInfo() *proto.RoleBaseInfo {
 
 func (r *MapRole) MakeOutlook() *proto.RoleOutlook {
 	return &proto.RoleOutlook{
-		Weapon: uint32(r.data.Outlook.Weapon),
-		Helm:   uint32(r.data.Outlook.Helm),
-		Face:   uint32(r.data.Outlook.Face),
-		Wing:   uint32(r.data.Outlook.Wing),
-		Bag:    uint32(r.data.Outlook.Bag),
-		Suit:   uint32(r.data.Outlook.Suit),
+		Weapon: uint32(r.data.EquipData.Weapon.Type),
+		Helm:   uint32(r.data.EquipData.Helm.Type),
+		Face:   0,
+		Wing:   uint32(r.data.EquipData.Wing.Type),
+		Bag:    uint32(r.data.EquipData.Bag.Type),
+		Suit:   uint32(r.data.EquipData.Suit.Type),
 	}
 }
 
@@ -69,7 +69,9 @@ func (r *MapRole) ChangeChunk(src *MapChunk, dst *MapChunk) {
 		}
 	}
 
-	src.RemoveRole(r)
+	if src != nil {
+		src.RemoveRole(r)
+	}
 
 	for i := 0; i < shared.ClientChunkTotal; i++ {
 		c := leaveChunks[i]
@@ -108,27 +110,37 @@ func (r *MapRole) ChangeChunk(src *MapChunk, dst *MapChunk) {
 	}
 
 	r.c = dst
-	dst.AddRole(r)
+	if dst != nil {
+		dst.AddRole(r)
+	}
 }
 
 func (r *MapRole) OnRoleLeave(role *MapRole) {
 	leaveInfo := proto.SyncRoleLeaveRange{}
 	leaveInfo.RoleIdx = r.idx
-	role.agent.WriteMsg(&leaveInfo)
+	if role.agent != nil {
+		role.agent.WriteMsg(&leaveInfo)
+	}
 
 	leaveInfo.RoleIdx = role.idx
-	r.agent.WriteMsg(&leaveInfo)
+	if role.agent != nil {
+		r.agent.WriteMsg(&leaveInfo)
+	}
 }
 
 func (r *MapRole) OnRoleEnter(role *MapRole) {
 	enterInfo := proto.SyncRoleEnterRange{}
 	enterInfo.RoleIdx = r.idx
 	enterInfo.RoleBaseInfo = r.MakeBaseInfo()
-	role.agent.WriteMsg(&enterInfo)
+	if role.agent != nil {
+		role.agent.WriteMsg(&enterInfo)
+	}
 
 	enterInfo.RoleIdx = role.idx
 	enterInfo.RoleBaseInfo = role.MakeBaseInfo()
-	r.agent.WriteMsg(&enterInfo)
+	if r.agent != nil {
+		r.agent.WriteMsg(&enterInfo)
+	}
 }
 
 func (r *MapRole) handleRoleAction(req *proto.ReqRoleAction) {

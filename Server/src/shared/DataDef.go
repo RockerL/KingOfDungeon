@@ -11,14 +11,20 @@ type UserData struct {
 	RoleNum uint32 `bson:"RoleNum"` //角色数量
 }
 
-//角色外观穿着信息
-type OutlookData struct {
-	Weapon uint16 `bson:"Weapon"`
-	Helm   uint16 `bson:"Helm"`
-	Face   uint16 `bson:"Face"`
-	Wing   uint16 `bson:"Wing"`
-	Bag    uint16 `bson:"Bag"`
-	Suit   uint16 `bson:"Suit"`
+//角色道具
+type RoleItemData struct {
+	Type    uint16 `bson:"Type"`    //道具类型
+	Count   uint16 `bson:"Count"`   //叠加数量
+	Durable uint32 `bson:"Durable"` //耐久度
+}
+
+//穿着的装备信息
+type EquipItemData struct {
+	Weapon RoleItemData `bson:"Weapon"` //装备的武器
+	Helm   RoleItemData `bson:"Helm"`   //装备的头盔
+	Wing   RoleItemData `bson:"Wing"`   //装备的翅膀
+	Bag    RoleItemData `bson:"Bag"`    //装备的背包
+	Suit   RoleItemData `bson:"Suit"`   //装备的盔甲
 }
 
 //角色信息
@@ -32,7 +38,7 @@ type RoleData struct {
 	MapId     uint32            `bson:"MapId"`     //所在地图ID
 	Pos       algorithm.Vector3 `bson:"Pos"`       //当前位置
 	Angle     uint32            `bson:"Angle"`     //当前朝向
-	Outlook   OutlookData       `bson:"Outlook"`   //当前朝向
+	EquipData EquipItemData     `bson:"Outlook"`   //当前装备的装备
 }
 
 const DBName = "game"        //保存用户数据和角色数据

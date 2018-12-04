@@ -11,13 +11,22 @@ func init() {
 	skeleton.RegisterChanRPC("DisconnectFromServer", rpcDisconnectFromServer)
 	skeleton.RegisterChanRPC("MapLoaded", rpcMapLoaded)
 
+	skeleton.RegisterChanRPC("NewAgent", rpcNewAgent)
 	skeleton.RegisterChanRPC("CloseAgent", rpcCloseAgent)
+}
+
+//客户端连接
+func rpcNewAgent(args []interface{}) {
+	a := args[0].(gate.Agent)
+	log.Debug("client connected %v", a.RemoteAddr())
 }
 
 //客户端断开
 func rpcCloseAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	a.SetUserData(nil)
+	log.Debug("client disconnected %v", a.RemoteAddr())
+	mapRole := a.UserData().(*MapRole)
+	mapRole.m.ChanRPCServer.Go("RoleDisconnect", mapRole)
 }
 
 //====================================================================================

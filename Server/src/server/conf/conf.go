@@ -23,5 +23,5 @@ var (
 	ChanRPCLen         = 10000
 
 	//map conf
-	MapRoleMax = 2000
+	MapRoleMax = 1000
 )

@@ -20,19 +20,18 @@ func handler(m interface{}, h interface{}) {
 func handleNotifyRoleEnter(args []interface{}) {
 	a := args[0].(*proto.NotifyRoleEnter)
 
-	var retCode int32 = 0
+	waitEnterRoles[a.Token] = &WaitEnterRole{
+		roleId:    a.RoleId,
+		timeStamp: time.Now().Unix(),
+	}
 
-	defer func() {
-		ctAgent.WriteMsg(&proto.NotifyRoleEnteredReady{
-			RetCode:    retCode,
-			UserId:     a.UserId,
-			RoleId:     a.RoleId,
-			MapId:      a.MapId,
-			Token:      a.Token,
-			ServerIp:   netutil.GetIPFromAddr(conf.Server.TCPAddr),
-			ServerPort: netutil.GetPortFromAddr(conf.Server.TCPAddr),
-		})
-	}()
-
-	waitEnterRoles[a.Token] = time.Now().Unix()
+	ctAgent.WriteMsg(&proto.NotifyRoleEnteredReady{
+		RetCode:    0,
+		UserId:     a.UserId,
+		RoleId:     a.RoleId,
+		MapId:      a.MapId,
+		Token:      a.Token,
+		ServerIp:   netutil.GetIPFromAddr(conf.Server.TCPAddr),
+		ServerPort: netutil.GetPortFromAddr(conf.Server.TCPAddr),
+	})
 }

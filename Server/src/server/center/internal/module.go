@@ -11,12 +11,19 @@ import (
 	"server/conf"
 	"shared"
 	"sync"
+	"time"
 )
+
+//等待角色进入项
+type WaitEnterRole struct {
+	roleId    string
+	timeStamp int64
+}
 
 var (
 	skeleton                            = base.NewSkeleton()
 	ChanRPC                             = skeleton.ChanRPCServer
-	waitEnterRoles                      = make(map[string]int64)
+	waitEnterRoles                      = make(map[string]*WaitEnterRole)
 	Maps                                = make(map[uint32]*Map)
 	loadedMapCount                      = 0
 	DBSession      *mongodb.DialContext = nil //数据库连接
@@ -25,7 +32,8 @@ var (
 
 type Module struct {
 	*module.Skeleton
-	wg sync.WaitGroup
+	wgMap        sync.WaitGroup
+	secondTicker *shared.UserTicker
 }
 
 func (m *Module) OnInit() {
@@ -71,25 +79,36 @@ func (m *Module) OnInit() {
 
 		newMap := NewMap(mapId)
 
-		m.wg.Add(1)
+		m.wgMap.Add(1)
 		Maps[mapId] = newMap
 
 		go func() {
 			log.Debug("map %v goroutine start", mapId)
 			newMap.Run(newMap.closeSig)
 			log.Debug("map %v goroutine exit", mapId)
-			m.wg.Done()
+			m.wgMap.Done()
 		}()
 
 		newMap.ChanRPCServer.Go("LoadMap", newMap)
 	}
 
+	//开启计时器
+	m.secondTicker = shared.NewUserTicker(time.Second, func() {
+		for _, m := range Maps {
+			m.ChanRPCServer.Go("OnTimerSecond", m)
+		}
+	})
 }
 
 func (m *Module) OnDestroy() {
 	log.Debug("center module destroy")
-	for _, v := range Maps {
-		v.closeSig <- true
+	//停止计时器
+	m.secondTicker.Stop()
+
+	//停止地图协程
+	for _, m := range Maps {
+		m.closeSig <- true
 	}
-	m.wg.Wait()
+
+	m.wgMap.Wait()
 }
