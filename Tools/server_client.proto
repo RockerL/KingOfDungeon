@@ -32,13 +32,7 @@ message role_base_info {
 //块信息
 message block_info {
 	uint32	BlockType = 1;
-	uint32	SubType = 2;
-	uint32	Durable = 3;
-}
-
-//区块信息
-message chunk_info {
-	repeated block_info blocks = 1;		//块集合
+	uint32	Content = 2;
 }
 
 //客户端请求让角色进入服务器地图
@@ -52,7 +46,18 @@ message rsp_enter_gs {
 	int32		retCode = 1;
 	int32		mainRoleIdx = 2;		//控制角色的ID和信息
 	role_base_info	mainRole = 3;
-	repeated chunk_info chunks = 4;			//周围区块的信息
+}
+
+//同步新的区块
+message sync_chunk_enter_range {
+	int32		chunkX = 1;
+	int32		chunkZ = 2;
+	repeated block_info blocks = 3;
+}
+
+message sync_chunk_leave_range {
+	int32		chunkX = 1;
+	int32		chunkZ = 2;
 }
 
 //同步某个角色进入同步范围
@@ -78,4 +83,34 @@ message sync_role_action {
 	role_pos	pos = 2;		//位置
 	uint32		role_angle = 3;		//方向
 	uint32		action = 4;		//动作表现
+}
+
+//请求操作块
+message req_op_block {
+	int32		OpCode = 1;
+	int32		blockX = 2;
+	int32		blockY = 3;
+	int32		blockZ = 4;
+}
+
+//同步块信息
+message sync_block {
+	int32		blockX = 1;
+	int32		blockY = 2;
+	int32		blockZ = 3;
+	block_info	info = 4;
+}
+
+//同步道具掉落
+message sync_obj_add {
+	uint32		ObjId = 1;
+	uint32		ObjType = 2;
+	uint32		remainTime = 3;
+	uint32		Count = 4;
+	string		OwnerRole = 5;		//归属，如果未空则未归属任何人
+}
+
+//生物进入视野
+message sync_creature_enter_range {
+	int32		creatureIdx = 1;
 }

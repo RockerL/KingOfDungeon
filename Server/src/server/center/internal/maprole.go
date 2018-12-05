@@ -4,6 +4,7 @@ import (
 	"github.com/name5566/leaf/gate"
 	"proto"
 	"shared"
+	"time"
 )
 
 //运行时角色
@@ -14,6 +15,8 @@ type MapRole struct {
 	agent  gate.Agent       //角色对应网络客户端连接
 	idx    int32            //角色在地图里的索引，地图里唯一
 	action uint32           //角色当前动作
+	face   uint16           //当前表情
+	opTime int64            //上一次操作的时间戳
 }
 
 func (r *MapRole) MakeBaseInfo() *proto.RoleBaseInfo {
@@ -31,7 +34,7 @@ func (r *MapRole) MakeOutlook() *proto.RoleOutlook {
 	return &proto.RoleOutlook{
 		Weapon: uint32(r.data.EquipData.Weapon.Type),
 		Helm:   uint32(r.data.EquipData.Helm.Type),
-		Face:   0,
+		Face:   uint32(r.face),
 		Wing:   uint32(r.data.EquipData.Wing.Type),
 		Bag:    uint32(r.data.EquipData.Bag.Type),
 		Suit:   uint32(r.data.EquipData.Suit.Type),
@@ -89,6 +92,14 @@ func (r *MapRole) ChangeChunk(src *MapChunk, dst *MapChunk) {
 			continue
 		}
 		c.OnRoleLeave(r)
+
+		syncLeave := &proto.SyncChunkLeaveRange{
+			ChunkX: c.data.ChunkX,
+			ChunkZ: c.data.ChunkZ,
+		}
+		if r.agent != nil {
+			r.agent.WriteMsg(syncLeave)
+		}
 	}
 
 	for i := 0; i < shared.ClientChunkTotal; i++ {
@@ -107,6 +118,15 @@ func (r *MapRole) ChangeChunk(src *MapChunk, dst *MapChunk) {
 			continue
 		}
 		c.OnRoleEnter(r)
+
+		syncEnter := &proto.SyncChunkEnterRange{
+			ChunkX: c.data.ChunkX,
+			ChunkZ: c.data.ChunkZ,
+			Blocks: c.MakeChunkBlockInfo(),
+		}
+		if r.agent != nil {
+			r.agent.WriteMsg(syncEnter)
+		}
 	}
 
 	r.c = dst
@@ -169,5 +189,57 @@ func (r *MapRole) handleRoleAction(req *proto.ReqRoleAction) {
 		Action:    req.Action,
 	}
 
-	r.m.BroadcastAroundRole(r, rsp)
+	r.m.BroadcastAroundRole(r.c, rsp)
+}
+
+func (r *MapRole) handleRoleOpBlock(req *proto.ReqOpBlock) {
+	chunkX := int32(req.BlockX) / shared.ChunkBlockNum
+	chunkZ := int32(req.BlockZ) / shared.ChunkBlockNum
+
+	chunk := r.m.GetChunk(chunkX, chunkZ)
+	if chunk == nil {
+		return
+	}
+
+	block := chunk.GetBlock(req.BlockX, req.BlockY, req.BlockZ)
+	if block == nil {
+		return
+	}
+
+	roleBlockX := int32(r.data.Pos.X / shared.BlockSize)
+	roleBlockZ := int32(r.data.Pos.Z / shared.BlockSize)
+
+	//角色只能操作自己周围的块
+	if shared.Int32Abs(roleBlockX-int32(req.BlockX)) > 1 ||
+		shared.Int32Abs(roleBlockZ-int32(req.BlockZ)) > 1 {
+		return
+	}
+
+	//检查CD
+	curTime := time.Now().Unix()
+	if curTime-r.opTime < 1 {
+		return
+	}
+
+	sync := &proto.SyncBlock{
+		BlockX: req.BlockX,
+		BlockY: req.BlockY,
+		BlockZ: req.BlockZ,
+	}
+
+	switch req.OpCode {
+	case OP_Dig:
+		if block.Content > 0 {
+			block.Content--
+		}
+		if block.Content == 0 {
+			block.BlockType = Air
+		}
+	}
+
+	sync.Info = &proto.BlockInfo{
+		BlockType: uint32(block.BlockType),
+		Content:   uint32(block.Content),
+	}
+	r.m.BroadcastAroundRole(chunk, sync)
 }

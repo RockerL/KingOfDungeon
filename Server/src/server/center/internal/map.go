@@ -22,18 +22,15 @@ type WaitLeaveRole struct {
 //运行时地图定义
 type Map struct {
 	*module.Skeleton
-	Id       uint32    //地图编号
-	closeSig chan bool //地图协程退出信号
-
-	roles            []*MapRole                //地图里容纳的最大角色
-	roleIdxAllocator *algorithm.IndexAllocator //角色索引分配器
-
-	chunks [shared.MapTotalChunk]MapChunk //地图的所有运行时区块
-
-	collectionName string           //地图的数据库集合名
-	dbSession      *mongodb.Session //数据库会话，一个map协程一个
-
-	waitLeaveRoles map[string]*WaitLeaveRole //等待离开地图的角色
+	Id               uint32                         //地图编号
+	closeSig         chan bool                      //地图协程退出信号
+	rolesArray       []*MapRole                     //地图里容纳的最大角色
+	roleIdxAllocator *algorithm.IndexAllocator      //角色索引分配器
+	rolesMap         map[bson.ObjectId]*MapRole     //所有正在玩的角色查找表
+	chunks           [shared.MapTotalChunk]MapChunk //地图的所有运行时区块
+	collectionName   string                         //地图的数据库集合名
+	dbSession        *mongodb.Session               //数据库会话，一个map协程一个
+	waitLeaveRoles   map[string]*WaitLeaveRole      //等待离开地图的角色
 }
 
 func NewMap(id uint32) *Map {
@@ -41,7 +38,8 @@ func NewMap(id uint32) *Map {
 		Id:               id,
 		Skeleton:         base.NewSkeleton(),
 		closeSig:         make(chan bool, 0),
-		roles:            make([]*MapRole, conf.MapRoleMax),
+		rolesArray:       make([]*MapRole, conf.MapRoleMax),
+		rolesMap:         make(map[bson.ObjectId]*MapRole),
 		roleIdxAllocator: algorithm.NewIndexAllocator(conf.MapRoleMax),
 		collectionName:   MapTableNamePrefix + strconv.Itoa(int(id)),
 		dbSession:        DBSession.Ref(),
@@ -53,6 +51,7 @@ func NewMap(id uint32) *Map {
 	m.ChanRPCServer.Register("RoleEnterMap", mapHandleRoleEnterMap)
 	m.ChanRPCServer.Register("RoleDisconnect", mapHandleRoleDisconnect)
 	m.ChanRPCServer.Register("RoleAction", mapHandleRoleAction)
+	m.ChanRPCServer.Register("RoleOpBlock", mapHandleRoleOpBlock)
 	m.ChanRPCServer.Register("OnTimerSecond", mapHandleOnTimerSecond)
 	return m
 }
@@ -91,39 +90,23 @@ func (m *Map) GetChunk(chunkX int32, chunkZ int32) *MapChunk {
 
 //角色进入地图
 func (m *Map) RoleEnter(mapRole *MapRole) {
-	m.roles[mapRole.idx] = mapRole
+	m.rolesArray[mapRole.idx] = mapRole
+	m.rolesMap[mapRole.data.Id] = mapRole
 
 	chunkX := int32(mapRole.data.Pos.X / shared.ChunkSize)
 	chunkZ := int32(mapRole.data.Pos.Z / shared.ChunkSize)
 
 	roleChunk := m.GetChunk(chunkX, chunkZ)
-
-	startChunkX := chunkX - 1
-	startChunkZ := chunkZ - 1
-
-	chunkNum := shared.ClientChunkNum * shared.ClientChunkNum
+	mapRole.ChangeChunk(nil, roleChunk)
 
 	rsp := &proto.RspEnterGs{
 		RetCode:     0,
 		MainRoleIdx: mapRole.idx,
 		MainRole:    mapRole.MakeBaseInfo(),
-		Chunks:      make([]*proto.ChunkInfo, chunkNum),
 	}
-
-	for z := int32(0); z < shared.ClientChunkNum; z++ {
-		for x := int32(0); x < shared.ClientChunkNum; x++ {
-			idx := z*shared.ClientChunkNum + x
-			chunk := m.GetChunk(x+startChunkX, z+startChunkZ)
-			if chunk != nil {
-				rsp.Chunks[idx] = chunk.MakeChunkInfo()
-			}
-		}
-	}
-
 	if mapRole.agent != nil {
 		mapRole.agent.WriteMsg(rsp)
 	}
-	mapRole.ChangeChunk(nil, roleChunk)
 }
 
 //角色离开地图
@@ -138,14 +121,15 @@ func (m *Map) RoleLeave(mapRole *MapRole) {
 		log.Error("role leave from nil chunk")
 	}
 
-	m.roles[mapRole.idx] = nil
+	m.rolesArray[mapRole.idx] = nil
+	delete(m.rolesMap, mapRole.data.Id)
 	m.roleIdxAllocator.Free(int(mapRole.idx))
 }
 
 //广播消息给角色周围的区块
-func (m *Map) BroadcastAroundRole(role *MapRole, msg interface{}) {
-	chunkStartX := role.c.data.ChunkX - int32(shared.ClientChunkNum)/2
-	chunkStartZ := role.c.data.ChunkZ - int32(shared.ClientChunkNum)/2
+func (m *Map) BroadcastAroundRole(chunk *MapChunk, msg interface{}) {
+	chunkStartX := chunk.data.ChunkX - int32(shared.ClientChunkNum)/2
+	chunkStartZ := chunk.data.ChunkZ - int32(shared.ClientChunkNum)/2
 
 	for z := chunkStartZ; z < chunkStartZ+shared.ClientChunkNum; z++ {
 		for x := chunkStartX; x < chunkStartX+shared.ClientChunkNum; x++ {
@@ -153,7 +137,7 @@ func (m *Map) BroadcastAroundRole(role *MapRole, msg interface{}) {
 			if chunk != nil {
 				chunk.roles.Traversal(func(v algorithm.ElemType) {
 					r := v.(*MapRole)
-					if r != role && r.agent != nil {
+					if r.agent != nil {
 						r.agent.WriteMsg(msg)
 					}
 				})

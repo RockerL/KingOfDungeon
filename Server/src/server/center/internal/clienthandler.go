@@ -10,13 +10,22 @@ import (
 	"time"
 )
 
-func handleMsg(m interface{}, h interface{}) {
+var msgDispatchMap map[interface{}]string
+
+func handleMsg(m interface{}, h interface{}, dispatchName string) {
+	if dispatchName != "" {
+		msgDispatchMap[reflect.TypeOf(m)] = dispatchName
+	}
+
 	skeleton.RegisterChanRPC(reflect.TypeOf(m), h)
 }
 
 func init() {
-	handleMsg(&proto.ReqEnterGs{}, handleEnterGS)
-	handleMsg(&proto.ReqRoleAction{}, handleRoleAction)
+	msgDispatchMap = make(map[interface{}]string)
+
+	handleMsg(&proto.ReqEnterGs{}, handleEnterGS, "")
+	handleMsg(&proto.ReqRoleAction{}, handleOtherRequest, "RoleAction")
+	handleMsg(&proto.ReqOpBlock{}, handleOtherRequest, "RoleOpBlock")
 }
 
 //处理客户端请求进入游戏服务器
@@ -74,11 +83,20 @@ func handleEnterGS(args []interface{}) {
 	}
 }
 
-//处理角色的动作，位置，方向同步
-func handleRoleAction(args []interface{}) {
+//处理客户端的其他请求
+func handleOtherRequest(args []interface{}) {
+	funcName, ok := msgDispatchMap[reflect.TypeOf(args[0])]
 	a := args[1].(gate.Agent)
 	mapRole := a.UserData().(*MapRole)
-	if mapRole != nil {
-		mapRole.m.ChanRPCServer.Go("RoleAction", args)
+	if mapRole == nil {
+		log.Error("agent have not attach role")
+		return
 	}
+
+	if !ok {
+		log.Error("can not found dispatch function name")
+		return
+	}
+
+	mapRole.m.ChanRPCServer.Go(funcName, args)
 }

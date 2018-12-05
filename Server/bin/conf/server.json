@@ -3,9 +3,11 @@
 	"LogPath": "",
 	"TCPAddr": "0.0.0.0:3563",
 	"MaxConnNum": 20000,
-
 	"DBAddr":"127.0.0.1",
 	"CTAddr":"127.0.0.1:35500",
-
-	"MapLoad":[1]
+	"MapLoad":[1],
+	"DefaultContentValue":86400,
+	"BlockContentInitValue": {
+		"1":10
+	}
 }

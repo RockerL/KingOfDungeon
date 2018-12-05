@@ -24,4 +24,6 @@ var (
 
 	//map conf
 	MapRoleMax = 1000
+
+	ContentInitValue = make(map[uint16]uint32)
 )

@@ -4,9 +4,8 @@ import "shared"
 
 //地图块数据定义
 type BlockData struct {
-	BlockType uint8  `bson:"Type"`
-	SubType   uint8  `bson:"SubType"`
-	Durable   uint32 `bson:"Durable"`
+	BlockType uint16 `bson:"Type"`
+	Content   uint32 `bson:"Durable"`
 }
 
 //地图区块数据定义
@@ -43,4 +42,8 @@ const (
 	PlayerRoom     = 36 //玩家修建的房间，外观上只能看见地表和地表上的家具
 	PlayerSteps    = 37 //玩家修建的斜坡台阶，连接各个层
 	SafeWall       = 38 //安全区边界块
+)
+
+const (
+	OP_Dig = 1 //挖操作
 )

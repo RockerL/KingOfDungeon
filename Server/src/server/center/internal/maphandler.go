@@ -23,18 +23,23 @@ func mapHandleRoleEnterMap(args []interface{}) {
 	roleData := args[1].(*shared.RoleData)
 	m := args[2].(*Map)
 
-	//如果角色在离开等待列表里则直接使用已有的角色，并替换成新的Agent
-	var role *MapRole = nil
+	//如果角色在离开等待列表里则从等待列表里删除
 	for k, v := range m.waitLeaveRoles {
 		if v.role.data.Id == roleData.Id {
-			role = v.role
-			role.agent = a
 			delete(m.waitLeaveRoles, k)
 			break
 		}
 	}
 
-	if role == nil {
+	//如果角色正在玩，关闭之前的旧链接，关联新链接
+	role, ok := m.rolesMap[roleData.Id]
+	if ok {
+		if role.agent != nil {
+			role.agent.SetUserData(nil)
+			role.agent.Destroy()
+		}
+		role.agent = a //关联新链接
+	} else {
 		rsp := &proto.RspEnterGs{}
 		roleIdx := m.roleIdxAllocator.Alloc()
 		if roleIdx < 0 {
@@ -70,6 +75,14 @@ func mapHandleRoleAction(args []interface{}) {
 	a := args[1].(gate.Agent)
 	role := a.UserData().(*MapRole)
 	role.handleRoleAction(r)
+}
+
+//处理角色操作块
+func mapHandleRoleOpBlock(args []interface{}) {
+	r := args[0].(*proto.ReqOpBlock)
+	a := args[1].(gate.Agent)
+	role := a.UserData().(*MapRole)
+	role.handleRoleOpBlock(r)
 }
 
 //每1秒调用
