@@ -5,11 +5,10 @@ import (
 	"shared/algorithm"
 )
 
-const DBName = "game"        //保存用户数据和角色数据
-const UserTableName = "user" //用户数据表名
-const RoleTableName = "role" //角色数据表名
-const MaxRoleNum = 8         //一个用户最多创建的角色数量
-
+const DBName = "game"                                             //保存用户数据和角色数据
+const UserTableName = "user"                                      //用户数据表名
+const RoleTableName = "role"                                      //角色数据表名
+const MaxRoleNum = 8                                              //一个用户最多创建的角色数量
 const BlockSize = 4                                               //块的尺寸
 const BlockMaxY = 4                                               //游戏中高度方向上的块数量
 const ChunkBlockNum = 4                                           //组成区块中单边小块的数量
@@ -18,11 +17,12 @@ const MapTotalChunk = MaxChunkNum * MaxChunkNum                   //地图中所
 const ChunkBlockTotal = ChunkBlockNum * ChunkBlockNum * BlockMaxY //区块中块的数量
 const ChunkSize = ChunkBlockNum * BlockSize                       //区块单边尺寸
 const WorldSize = ChunkSize * MaxChunkNum                         //地图的单边尺寸
+const ClientChunkNum = 3                                          //客户端需要的区块单边个数，只能为奇数
+const ClientChunkTotal = ClientChunkNum * ClientChunkNum          //客户端区块数量
+const BagMaxItem = 64                                             //背包里最大格子数
 
-const ClientChunkNum = 3                                 //客户端需要的区块单边个数，只能为奇数
-const ClientChunkTotal = ClientChunkNum * ClientChunkNum //客户端区块数量
-
-const BagMaxItem = 64 //背包里最大格子数
+//道具的分类
+const ItemEquipTypeEnd = 10000 //小于这个值的是装备
 
 //用户信息
 type UserData struct {
@@ -32,9 +32,10 @@ type UserData struct {
 
 //角色道具
 type RoleItemData struct {
-	Type    uint16 `bson:"Type"`    //道具类型
-	Count   uint16 `bson:"Count"`   //叠加数量
-	Durable uint32 `bson:"Durable"` //耐久度
+	Type       uint16 `bson:"Type"`       //道具类型
+	Count      uint16 `bson:"Count"`      //叠加数量
+	Durable    uint16 `bson:"Durable"`    //耐久度
+	CreateTime int64  `bson:"CreateTime"` //创建时间
 }
 
 //穿着的装备信息

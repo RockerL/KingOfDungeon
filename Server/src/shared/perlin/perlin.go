@@ -28,6 +28,8 @@ type Perlin struct {
 	g1 [B + B + 2]float64
 }
 
+//alpha是叠加时的衰减倍数，beta是振幅的缩放，n是叠加倍率（影响性能），seed是随机发生器的随机种子
+
 // NewPerlin creates new Perlin noise generator
 // In what follows "alpha" is the weight when the sum is formed.
 // Typically it is 2, As this approaches 1 the function is noisier.

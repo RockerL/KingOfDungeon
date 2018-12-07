@@ -228,12 +228,12 @@ func (r *MapRole) handleRoleOpBlock(req *proto.ReqOpBlock) {
 	}
 
 	switch req.OpCode {
-	case OP_Dig:
+	case OpDig:
 		if block.Content > 0 {
 			block.Content--
 		}
 		if block.Content == 0 {
-			block.BlockType = Air
+			block.BlockType = BlockAir
 		}
 	}
 

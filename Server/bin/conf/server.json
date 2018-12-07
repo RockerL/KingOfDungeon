@@ -6,6 +6,7 @@
 	"DBAddr":"127.0.0.1",
 	"CTAddr":"127.0.0.1:35500",
 	"MapLoad":[1],
+	"MapRandom":[872181],
 	"DefaultContentValue":86400,
 	"BlockContentInitValue": {
 		"1":10

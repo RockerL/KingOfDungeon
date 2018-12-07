@@ -16,6 +16,7 @@ type MapChunk struct {
 	blockStartX int32
 	blockStartZ int32
 	roles       *algorithm.SingleList //角色的链表头
+	m           *Map
 }
 
 //按照大平地生成地形
@@ -28,9 +29,9 @@ func (c *MapChunk) InitChunkWithFlat(id string, chunkX int32, chunkZ int32) {
 	for y := 0; y < shared.BlockMaxY; y++ {
 		for z := 0; z < shared.ChunkBlockNum; z++ {
 			for x := 0; x < shared.ChunkBlockNum; x++ {
-				var t uint16 = Air
+				var t uint16 = BlockAir
 				if y < shared.BlockMaxY/2 {
-					t = Earth
+					t = BlockEarth
 				}
 				idx := y*shared.ChunkBlockNum*shared.ChunkBlockNum + z*shared.ChunkBlockNum + x
 				c.data.BlockArray[idx].BlockType = t

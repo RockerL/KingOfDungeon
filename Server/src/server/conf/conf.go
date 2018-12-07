@@ -25,5 +25,7 @@ var (
 	//map conf
 	MapRoleMax = 1000
 
-	ContentInitValue = make(map[uint16]uint32)
+	BlockContentInitValue = make(map[uint16]uint32)
+
+	MapGenRandom = make(map[uint32]int64)
 )

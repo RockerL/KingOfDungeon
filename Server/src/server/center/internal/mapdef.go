@@ -1,6 +1,38 @@
 package internal
 
-import "shared"
+import (
+	"shared"
+	"shared/algorithm"
+)
+
+const WorldDBName = "world"       //世界数据库名
+const MapTableNamePrefix = "map_" //地图块数据集合表名前缀
+
+//块类型定义
+const (
+	BlockAir     = 0  //空气
+	BlockEarth   = 1  //土块
+	BlockWater   = 2  //水块
+	BlockGrass   = 3  //草块，顶部是草面，底部是土
+	BlockIron    = 4  //铁块
+	BlockBronze  = 5  //铜块
+	BlockGold    = 6  //金块
+	BlockSilver  = 7  //银块
+	BlockSulphur = 8  //硫磺块
+	BlockCoal    = 9  //煤块
+	BlockStone   = 10 //石块
+)
+
+const (
+	OpDig = 1 //挖操作
+)
+
+//地面可交互物体，包含掉落的道具，种植的农作物，野果
+type MapObjectData struct {
+	ObjectType uint16            `bson:"Type"`
+	Pos        algorithm.Vector3 `bson:"Pos"`
+	ItemData   shared.RoleItemData
+}
 
 //地图块数据定义
 type BlockData struct {
@@ -10,40 +42,9 @@ type BlockData struct {
 
 //地图区块数据定义
 type MapChunkData struct {
-	ChunkId    string                            `bson:"Id"`
-	ChunkX     int32                             `bson:"ChunkX"`
-	ChunkZ     int32                             `bson:"ChunkZ"`
-	BlockArray [shared.ChunkBlockTotal]BlockData `bson:"BlockArray"`
+	ChunkId     string                            `bson:"Id"`
+	ChunkX      int32                             `bson:"ChunkX"`
+	ChunkZ      int32                             `bson:"ChunkZ"`
+	BlockArray  [shared.ChunkBlockTotal]BlockData `bson:"BlockArray"`
+	ObjectArray []MapObjectData                   `bson:"BlockArray"`
 }
-
-const WorldDBName = "world"       //世界数据库名
-const MapTableNamePrefix = "map_" //地图块数据集合表名前缀
-
-const (
-	SolidStart = 0 //下面的枚举属于实心块，且是系统生成的
-	Earth      = 1 //土块
-	Stone      = 2 //石块
-	Sand       = 3
-	Marble     = 4
-	Gold       = 5
-	Silver     = 6
-	Iron       = 7
-	Bronze     = 8
-	Sulphur    = 9
-	Coal       = 10
-	Boundary   = 11
-
-	EmptyStart     = 30 //下面的块属于空的块
-	Air            = 31 //空气
-	Lava           = 32 //岩浆
-	River          = 33 //水
-	PlayerWall     = 34 //玩家修建的墙和台阶
-	PlayerRoomWall = 35 //玩家修建的房间周围的墙，和房间连接在一起有增益
-	PlayerRoom     = 36 //玩家修建的房间，外观上只能看见地表和地表上的家具
-	PlayerSteps    = 37 //玩家修建的斜坡台阶，连接各个层
-	SafeWall       = 38 //安全区边界块
-)
-
-const (
-	OP_Dig = 1 //挖操作
-)

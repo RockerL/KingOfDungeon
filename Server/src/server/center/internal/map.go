@@ -11,6 +11,7 @@ import (
 	"server/conf"
 	"shared"
 	"shared/algorithm"
+	"shared/perlin"
 	"strconv"
 )
 
@@ -31,6 +32,7 @@ type Map struct {
 	collectionName   string                         //地图的数据库集合名
 	dbSession        *mongodb.Session               //数据库会话，一个map协程一个
 	waitLeaveRoles   map[string]*WaitLeaveRole      //等待离开地图的角色
+	perlinNoise      *perlin.Perlin                 //每个地图有一个自己的柏林噪音生成器
 }
 
 func NewMap(id uint32) *Map {
@@ -44,6 +46,7 @@ func NewMap(id uint32) *Map {
 		collectionName:   MapTableNamePrefix + strconv.Itoa(int(id)),
 		dbSession:        DBSession.Ref(),
 		waitLeaveRoles:   make(map[string]*WaitLeaveRole),
+		perlinNoise:      perlin.NewPerlin(2, 2, 3, conf.MapGenRandom[id]),
 	}
 
 	//注册地图协程的消息处理函数
@@ -76,6 +79,7 @@ func (m *Map) GetChunk(chunkX int32, chunkZ int32) *MapChunk {
 	chunk := &m.chunks[chunkIdx]
 
 	if chunk.data.ChunkId == "" {
+		chunk.m = m
 		chunkName := fmt.Sprintf("%v_%v", chunkX, chunkZ)
 		chunkData := &chunk.data
 		err := m.dbSession.DB(WorldDBName).C(m.collectionName).Find(bson.M{"Id": chunkName}).One(&chunkData)
