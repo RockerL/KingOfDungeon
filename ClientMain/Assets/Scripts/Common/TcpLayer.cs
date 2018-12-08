@@ -372,7 +372,6 @@ namespace U3DUtility
 
                         lock (mRecvPacks)
                         {
-                            //Debug.LogFormat("recv data {0} {1}", data.buff.Length, p.messId);
                             mRecvPacks.Enqueue(p);
                         }
 
