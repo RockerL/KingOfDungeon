@@ -366,6 +366,16 @@ namespace U3DUtility
 
                     if (packLen == MSG_ID_SIZE) //表示包体没有数据，只有一个消息ID，这时发起新的包异步读取
                     {
+                        Pkt p;
+                        p.data = new byte[0];
+                        p.messId = msgID;
+
+                        lock (mRecvPacks)
+                        {
+                            //Debug.LogFormat("recv data {0} {1}", data.buff.Length, p.messId);
+                            mRecvPacks.Enqueue(p);
+                        }
+
                         BeginPackRead();    
                     }
                     else if (packLen < MSG_ID_SIZE)

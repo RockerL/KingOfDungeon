@@ -55,10 +55,12 @@ public class MainClass
         }, (msg)=> {
             Debug.Log("disconneted to server " + msg);
         }, (id, data)=> {
-            if (id == 0)
+            Debug.LogFormat("recv data id {0}", id);
+
+            if (id == 5)
             {
-                Msg.role_info info = Msg.role_info.Parser.ParseFrom(data);
-                Debug.LogFormat("recv data {0} {1} {2}", id, info.Name, info.Level);
+                Proto.rsp_login rsp = Proto.rsp_login.Parser.ParseFrom(data);
+                Debug.LogFormat("recv rsp_login {0}", rsp.RetCode);
 
                 
             }
@@ -99,18 +101,16 @@ public class MainClass
             Debug.LogFormat("obj2 {0} ", obj2["person"][0]["name"].AsString());
             */
 
-            PlayerAttrib attrib = new PlayerAttrib();
-            ClientScene.Instance.Load(new Vector3(100, 8, 100), attrib);
-            /*
-            Msg.role_info info = new Msg.role_info();
-            info.Level = 100;
-            info.Name = "king of dungeon";
+            //PlayerAttrib attrib = new PlayerAttrib();
+            //ClientScene.Instance.Load(new Vector3(100, 8, 100), attrib);
 
+            Proto.req_login req = new Proto.req_login();
+            req.UserId = "ddsds";
             var mem = new MemoryStream();
-            info.WriteTo(mem);
+            req.WriteTo(mem);
             mem.Position = 0;
 
-            TcpLayer.singleton.SendPack(0, mem.ToArray());*/
+            TcpLayer.singleton.SendPack(0, mem.ToArray());
         });
     }
 

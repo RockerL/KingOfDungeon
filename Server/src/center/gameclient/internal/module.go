@@ -40,13 +40,13 @@ func (m *Module) OnInit() {
 	m.Skeleton = skeleton
 
 	//初始化数据连接
-	dbSession, err := mongodb.Dial(conf.Server.DBAddr, 10)
-	if dbSession == nil {
+	s, err := mongodb.Dial(conf.Server.DBAddr, 10)
+	if s == nil {
 		log.Error("can not connect mongodb ip %v err %v", conf.Server.DBAddr, err.Error())
 		return
 	} else {
 		log.Release("connect mongodb %v success", conf.Server.DBAddr)
-
+		dbSession = s
 		log.Debug("game client module init")
 	}
 }

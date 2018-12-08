@@ -114,3 +114,11 @@ message sync_obj_add {
 message sync_creature_enter_range {
 	int32		creatureIdx = 1;
 }
+
+//角色更换装备或者挪动背包
+message req_change_item_pos {
+	int32		SrcPosType = 1;		//原位置类型 0=装备栏 1=背包栏
+	int32		SrcPosIdx = 2;		//孔所在的索引
+	int32		DstPosType = 3;		//目标位置 0=装备栏 1=背包栏
+	int32		DstPosIdx = 4;
+}

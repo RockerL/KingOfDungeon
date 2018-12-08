@@ -26,100 +26,84 @@ func init() {
 func handleLogin(args []interface{}) {
 	r := args[0].(*proto.ReqLogin)
 	a := args[1].(gate.Agent)
-
-	_, isUserLogin := loginUsers[r.UserId]
-	if isUserLogin {
-		a.WriteMsg(&proto.RspLogin{
-			RetCode: 1, //用户已经登录
-		})
-		log.Debug("user %v is already login", r.UserId)
-		return
-	}
-
 	//检查运行商是否已经允许该用户登录
 
 	//根据用户Id去查数据库，如果数据库没有，则新建一个用户到数据库
 	s := dbSession.Ref()
-	defer dbSession.UnRef(s)
-	var users []shared.UserData
-	s.DB(shared.DBName).C(shared.UserTableName).Find(bson.M{"OpId": r.UserId}).One(&users)
+	rsp := &proto.RspLogin{}
+	defer func() {
+		dbSession.UnRef(s)
+		a.WriteMsg(rsp)
+	}()
 
-	if len(users) == 0 {
-		log.Debug("user %v is not found, create it", r.UserId)
-
-		s.DB(shared.DBName).C(shared.UserTableName).Insert(&shared.UserData{
-			Id:      r.UserId,
-			RoleNum: 0,
-		})
+	//检查用户是否已经登录
+	_, isUserLogin := loginUsers[r.UserId]
+	if isUserLogin {
+		rsp.RetCode = 1
+		log.Debug("user %v is already login", r.UserId)
+		return
 	}
 
-	s.DB(shared.DBName).C(shared.UserTableName).Find(bson.M{"OpId": r.UserId}).One(&users)
-
 	user := &User{
-		data:  users[0],
 		agent: a,
 		state: Login,
 	}
+	err := s.DB(shared.DBName).C(shared.UserTableName).Find(bson.M{"Id": r.UserId}).One(&user.data)
+	if err != nil {
+		log.Debug("user %v err %v, create it", r.UserId, err.Error())
+		user.data.RoleNum = 0
+		user.data.Id = r.UserId
+		s.DB(shared.DBName).C(shared.UserTableName).Insert(&user.data)
+	}
 
 	loginUsers[r.UserId] = user
-
 	loginAgentUsers[a] = user
 
-	a.WriteMsg(&proto.RspLogin{
-		RetCode: 0,
-	})
-
-	log.Debug("user id %v login successful as %v", r.UserId, a.RemoteAddr())
+	rsp.RetCode = 0
+	log.Debug("user id %v login successful as %v", r.UserId, a.RemoteAddr().String())
 }
 
 //处理获取角色列表
 func handleRoleList(args []interface{}) {
 	a := args[1].(gate.Agent)
 
+	rsp := &proto.RspRolelist{}
+	s := dbSession.Ref()
+	defer func() {
+		dbSession.UnRef(s)
+		a.WriteMsg(rsp)
+	}()
+
 	user, ok := loginAgentUsers[a]
 	if !ok {
 		log.Debug("agent %v is not login", a.RemoteAddr())
-		a.WriteMsg(&proto.RspRolelist{
-			RetCode: 1, //用户未登录
-			RoleNum: 0,
-		})
+		rsp.RetCode = 1 //用户未登录
 		return
 	}
 
 	if user.agent != a {
 		log.Debug("agent %v is not agent login %v", a.RemoteAddr(), user.agent.RemoteAddr())
-		a.WriteMsg(&proto.RspRolelist{
-			RetCode: 2, //错误的用户
-			RoleNum: 0,
-		})
+		rsp.RetCode = 2 //错误的用户
 		return
 	}
 
 	if user.state != Login {
 		log.Debug("agent %v state wrong %v", a.RemoteAddr(), user.state)
-		a.WriteMsg(&proto.RspRolelist{
-			RetCode: 3, //错误的状态
-			RoleNum: 0,
-		})
+		rsp.RetCode = 3 //错误的状态
 		return
 	}
 
 	//去角色表里查找该用户的所有角色
-	s := dbSession.Ref()
-	defer dbSession.UnRef(s)
 	var roles []shared.RoleData
 	s.DB(shared.DBName).C(shared.RoleTableName).Find(bson.M{"UserId": user.data.Id}).All(&roles)
 
 	roleNum := len(roles)
 
-	retMsg := proto.RspRolelist{
-		RetCode:   0,
-		RoleNum:   user.data.RoleNum,
-		RoleInfos: make([]*proto.LoginRoleInfo, roleNum),
-	}
-
+	rsp.RetCode = 0
+	rsp.RoleNum = user.data.RoleNum
+	rsp.RoleInfos = make([]*proto.LoginRoleInfo, roleNum)
 	for i := 0; i < roleNum; i++ {
-		retMsg.RoleInfos[i] = &proto.LoginRoleInfo{
+		rsp.RoleInfos[i] = &proto.LoginRoleInfo{
 			RoleId: roles[i].Id.String(),
 			Name:   roles[i].Name,
 			Sex:    roles[i].Sex,
@@ -127,8 +111,6 @@ func handleRoleList(args []interface{}) {
 			MapId:  roles[i].MapId,
 		}
 	}
-
-	a.WriteMsg(&retMsg)
 }
 
 //处理创建角色
@@ -136,27 +118,28 @@ func handleCreateRole(args []interface{}) {
 	r := args[0].(*proto.ReqCreateRole)
 	a := args[1].(gate.Agent)
 
+	s := dbSession.Ref()
+	rsp := &proto.RspCreateRole{}
+	defer func() {
+		dbSession.UnRef(s)
+		a.WriteMsg(rsp)
+	}()
+
 	user, ok := loginAgentUsers[a]
 	if !ok {
-		a.WriteMsg(&proto.RspCreateRole{
-			RetCode: 1, //用户未登录
-		})
+		rsp.RetCode = 1 //用户未登录
 		return
 	}
 
 	//检查是否有空间创建角色
 	if user.data.RoleNum >= shared.MaxRoleNum {
-		a.WriteMsg(&proto.RspCreateRole{
-			RetCode: 2, //没有空间创建角色
-		})
+		rsp.RetCode = 2 //没有空间创建角色
 		return
 	}
 
 	//检查是否角色名重名，长度是否过短
 	if len(r.Name) < 4 {
-		a.WriteMsg(&proto.RspCreateRole{
-			RetCode: 3, //角色名过短
-		})
+		rsp.RetCode = 3 //角色名过短
 		return
 	}
 
@@ -171,27 +154,18 @@ func handleCreateRole(args []interface{}) {
 	}
 
 	//写入数据库
-	s := dbSession.Ref()
-	defer dbSession.UnRef(s)
 	err := s.DB(shared.DBName).C(shared.RoleTableName).Insert(&role)
 	if err != nil {
 		log.Error("can not create role %v", err.Error())
-		a.WriteMsg(&proto.RspCreateRole{
-			RetCode: 3, //数据库错误
-		})
+		rsp.RetCode = 4 //数据库错误
 		return
 	}
 
 	//返回消息给客户端
-	a.WriteMsg(&proto.RspCreateRole{
-		RetCode: 0,
-		Info: &proto.LoginRoleInfo{
-			RoleId: role.Id.String(),
-			Name:   role.Name,
-			Sex:    role.Sex,
-			Level:  role.Level,
-		},
-	})
+	rsp.Info.RoleId = role.Id.String()
+	rsp.Info.Level = role.Level
+	rsp.Info.Name = role.Name
+	rsp.Info.Sex = role.Sex
 }
 
 //处理删除角色
@@ -199,36 +173,31 @@ func handleDelRole(args []interface{}) {
 	r := args[0].(*proto.ReqDelRole)
 	a := args[1].(gate.Agent)
 
+	s := dbSession.Ref()
+	rsp := &proto.RspDelRole{}
+	defer func() {
+		dbSession.UnRef(s)
+		a.WriteMsg(rsp)
+	}()
+
 	_, ok := loginAgentUsers[a]
 	if !ok {
-		a.WriteMsg(&proto.RspDelRole{
-			RetCode: 1, //用户未登录
-			RoleId:  r.RoleId,
-		})
+		rsp.RetCode = 1 //用户未登录
 		return
 	}
-
-	s := dbSession.Ref()
-	defer dbSession.UnRef(s)
 
 	_id := bson.ObjectIdHex(r.RoleId)
 	var role = new(shared.RoleData)
 	err := s.DB(shared.DBName).C(shared.RoleTableName).Find(bson.M{"_id": _id}).One(&role)
 
 	if err != nil {
-		a.WriteMsg(&proto.RspDelRole{
-			RetCode: 2, //没有找到角色数据
-			RoleId:  r.RoleId,
-		})
+		rsp.RetCode = 2 //没有找到角色数据
 		return
 	}
 
 	s.DB(shared.DBName).C(shared.RoleTableName).RemoveAll(bson.M{"_id": _id})
-
-	a.WriteMsg(&proto.RspDelRole{
-		RetCode: 0,
-		RoleId:  r.RoleId,
-	})
+	rsp.RetCode = 0
+	rsp.RoleId = r.RoleId
 }
 
 //处理选择角色进入地图

@@ -234,7 +234,9 @@
     <Compile Include="Entity\Player.cs" />
     <Compile Include="MainClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protos\Role.cs" />
+    <Compile Include="Protos\CenterClient.cs" />
+    <Compile Include="Protos\CenterServer.cs" />
+    <Compile Include="Protos\ServerClient.cs" />
     <Compile Include="Scene\ClientScene.cs" />
     <Compile Include="Scene\TerrianChunk.cs" />
     <Compile Include="Scene\WorldDef.cs" />
