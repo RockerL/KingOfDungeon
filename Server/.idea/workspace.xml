@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7bb1caca-e516-4519-9385-d1ebcc6fbf14" name="Default Changelist" comment="柏林噪声生成地形">
-      <change beforePath="$PROJECT_DIR$/../ClientLogic/ClientLogic.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientLogic/ClientLogic.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ClientLogic/MainClass.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientLogic/MainClass.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ClientLogic/Protos/Login.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ClientLogic/Protos/Role.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ClientMain/Assets/Scripts/Common/TcpLayer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientMain/Assets/Scripts/Common/TcpLayer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ClientMain/Assets/StreamingAssets/ClientLogic.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientMain/Assets/StreamingAssets/ClientLogic.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ClientMain/Assets/StreamingAssets/ClientLogic.dll.mdb" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientMain/Assets/StreamingAssets/ClientLogic.dll.mdb" afterDir="false" />
+    <list default="true" id="7bb1caca-e516-4519-9385-d1ebcc6fbf14" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/center/gameclient/internal/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/center/gameclient/internal/handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/center/gameclient/internal/module.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/center/gameclient/internal/module.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/proto/server_client.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/proto/server_client.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Tools/server_client.proto" beforeDir="false" afterPath="$PROJECT_DIR$/../Tools/server_client.proto" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,7 +14,7 @@
     <session id="-808940669">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="5" />
+          <entry key="project.closed" value="6" />
           <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.4" value="1" />
           <entry key="project.open.time.5" value="5" />
